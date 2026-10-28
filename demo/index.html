@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Job Tracker — Synthetic Demo</title>
+  <style>
+    :root { color-scheme: light; --navy: #142236; --blue: #2263db; --off: #f4f7fb; --ink: #1b2a3d; --muted: #65758b; --border: #dde5ef; --green: #0a755c; --yellow: #95640e; --red: #a33b4e; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--off); color: var(--ink); font: 15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; }
+    button,input,select { font: inherit; }
+    button { cursor:pointer; }
+    header { background: var(--navy); color: #fff; padding: 26px max(24px, calc((100vw - 1200px)/2)); }
+    .eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: .13em; opacity:.78; }
+    h1 { font-size: clamp(26px,4vw,36px); margin: 4px 0 7px; font-weight: 760; letter-spacing: -.025em; }
+    header p { margin:0; color: #c8d4e7; max-width: 760px; }
+    .tag { display:inline-block; border-radius:100px; padding: 4px 10px; background:#e8f5ef; color:#076747; font-size:12px; font-weight:700; }
+    .banner { background:#fff5dc; border-bottom:1px solid #f0ddac; padding:10px 24px; color:#75571e; font-size:13px; text-align:center; }
+    main { max-width:1248px; margin: 25px auto 70px; padding:0 24px; }
+    .topline { display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:16px; }
+    .subtitle { color:var(--muted); margin-top: 2px; font-size:14px; }
+    h2 { margin:0; font-size: 22px; letter-spacing: -.02em; }
+    .tabs { display:flex; gap:8px; flex-wrap:wrap; border-bottom:1px solid var(--border); margin:20px 0 22px; padding-bottom:10px; }
+    .tabs button { border:1px solid transparent; background:transparent; color:var(--muted); border-radius:9px; padding:9px 13px; font-weight:650; }
+    .tabs button[aria-selected=true] { color:#1859d6; border-color:#bed1f5; background:#eaf1ff; }
+    .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-bottom:22px; }
+    .stat,.panel { background:#fff; border:1px solid var(--border); box-shadow:0 5px 15px rgba(25,42,70,.035); border-radius:14px; }
+    .stat { padding:18px 20px; }
+    .stat strong { display:block; font-size:28px; line-height:1.2; margin:5px 0; letter-spacing:-.03em; }
+    .stat span { color:var(--muted); font-size:13px; }
+    .stat small { color:var(--green); font-size:12px; }
+    .panel { overflow:hidden; }
+    .panel-head { display:flex; align-items:center; justify-content:space-between; padding:18px 20px; gap:15px; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+    .panel-head h3 { font-size:16px; margin:0; }
+    .muted { color:var(--muted); font-size:13px; }
+    .tools { display:flex; flex-wrap:wrap; gap:8px; }
+    input,select { background:#fff; border:1px solid #cad5e4; border-radius:9px; padding:9px 11px; min-width:120px; color:var(--ink); }
+    input:focus, select:focus, button:focus-visible { outline:2px solid #7da6ee; outline-offset:2px; }
+    .table-scroll { overflow-x:auto; }
+    table { border-collapse:collapse; width:100%; min-width:650px; }
+    th,td { padding:15px 20px; border-bottom:1px solid #edf1f6; text-align:left; }
+    th { color:var(--muted); background:#fafcff; font-size:11px; letter-spacing:.045em; text-transform:uppercase; }
+    td { font-size:14px; }
+    tbody tr:last-child td { border-bottom:none; }
+    td strong { display:block; font-size:14px; }
+    td .minor { display:block; color:var(--muted); font-size:12px; margin-top:2px; }
+    .pill { display:inline-block; white-space:nowrap; padding:4px 10px; border-radius:100px; font-size:12px; font-weight:700; background:#edf2f7; color:#52647a; }
+    .pill.active,.pill.open { background:#e4f6ec; color:#136a4b; }
+    .pill.rejected,.pill.archived { background:#fdecef; color:#9e3650; }
+    .pill.closed,.pill.recheck { background:#fff1cf; color:#865d0c; }
+    .pill.unverified,.pill.pending,.pill.review { background:#e9f0ff; color:#275fc0; }
+    .ghost { background:#fff; color:#1859d6; border:1px solid #bad0fa; border-radius:8px; padding:6px 10px; font-weight:650; font-size:12px; }
+    .empty { padding:28px; color:var(--muted); text-align:center; }
+    .note { background:#eff5ff; border:1px solid #d5e3ff; border-radius:12px; padding:14px 17px; color:#365b96; font-size:13px; margin: 0 0 20px; }
+    .foot { text-align:center; color:var(--muted); font-size:12px; margin-top:25px; }
+    dialog { border:1px solid var(--border); border-radius:16px; width:min(520px,calc(100vw - 35px)); padding:0; box-shadow:0 22px 65px rgba(17,37,69,.26); }
+    dialog::backdrop { background:rgba(13,30,53,.56); }
+    .dialog-body { padding:24px; }
+    .dialog-body h3 { font-size:21px; margin:0 0 8px; }
+    .dialog-body dl { display:grid; grid-template-columns:140px 1fr; gap:8px; font-size:14px; }
+    .dialog-body dt { color:var(--muted); }
+    .dialog-body dd { margin:0; }
+    .dialog-footer { display:flex; justify-content:flex-end; background:#f6f8fc; padding:15px 22px; border-top:1px solid var(--border); }
+    @media(max-width:800px) { .stats { grid-template-columns:repeat(2,minmax(0,1fr)); } .panel-head { align-items:stretch; } }
+    @media(max-width:480px) { main { padding:0 12px; margin-top:16px; } .stats { gap:8px; } .stat { padding:14px; } .stat strong { font-size:24px; } header { padding:24px 17px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">Engineering portfolio · Interactive preview</div>
+    <h1>Job Application Tracker</h1>
+    <p>An approval-first workflow for recruiting updates, application records, and job opportunities.</p>
+  </header>
+  <div class="banner"><strong>SYNTHETIC DEMO ONLY</strong> — all records are fictional. This page is read-only and never connects to Gmail, Google Sheets, Apps Script, or Pushover.</div>
+  <main>
+    <div class="topline"><div><h2 id="page-title">Applications</h2><div class="subtitle" id="page-description">Explore tracked applications and their latest verified state.</div></div><span class="tag">Offline • Read only</span></div>
+    <nav class="tabs" role="tablist" aria-label="Demo sections">
+      <button type="button" role="tab" aria-selected="true" data-tab="applications">Applications</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="approvals">Approvals</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="detection">Application Detection</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="queue">Action Queue</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="opportunities">Job Opportunities</button>
+    </nav>
+    <div class="stats" id="stats"></div>
+    <div class="note" id="explanation"></div>
+    <section class="panel">
+      <div class="panel-head"><div><h3 id="table-title"></h3><div class="muted" id="table-caption"></div></div><div class="tools"><input id="search" type="search" placeholder="Search demo records" aria-label="Search demo records"><select id="filter" aria-label="Filter by status"></select></div></div>
+      <div class="table-scroll"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+      <div id="empty" class="empty" hidden>No matching synthetic records.</div>
+    </section>
+    <div class="foot">Standalone example UI • No account access • No persisted changes • Fictional data</div>
+  </main>
+  <dialog id="details"><div class="dialog-body"><h3 id="detail-title">Record details</h3><p class="muted">Synthetic record — no private data</p><dl id="detail-list"></dl></div><div class="dialog-footer"><button type="button" class="ghost" id="close-details">Close</button></div></dialog>
+  <script>
+  'use strict';
+  // All fixture data below is invented solely for the public-facing demo preview.
+  const fixture = {
+    applications: [
+      { company:'Northstar Systems',role:'Software Engineering Intern',status:'Active',date:'2026-10-20',evidence:'Application confirmation received',id:'DEMO-001' },
+      { company:'Beacon Dataworks',role:'Junior Data Analyst',status:'Active',date:'2026-10-18',evidence:'Portal confirmation received',id:'DEMO-002' },
+      { company:'Atlas Cloudworks',role:'Cloud Developer Student',status:'Unverified',date:'2026-10-17',evidence:'Referral discussed; no submission confirmation',id:'DEMO-003' },
+      { company:'Cobalt Labs',role:'Product Analyst',status:'Rejected',date:'2026-10-12',evidence:'Personal rejection email received',id:'DEMO-004' },
+      { company:'Lumen Robotics',role:'Automation Engineering Intern',status:'Closed',date:'2026-10-10',evidence:'Position filled; not interpreted as a personal rejection',id:'DEMO-005' },
+      { company:'Greenfield Studio',role:'Customer Success Engineer',status:'Active',date:'2026-10-08',evidence:'Application confirmation received',id:'DEMO-006' },
+      { company:'Orchard Digital',role:'Business Development Associate',status:'Outreach',date:'2026-10-07',evidence:'Recruiter conversation only',id:'DEMO-007' }
+    ],
+    approvals: [
+      { company:'Blue Harbor AI',role:'Junior Backend Developer',status:'Pending',date:'2026-10-23',evidence:'Detected email is not linked to a verified application',id:'DEMO-APR-1' },
+      { company:'Aurora Platforms',role:'Student Software Engineer',status:'Review',date:'2026-10-22',evidence:'Company match found; requisition ID needs confirmation',id:'DEMO-APR-2' }
+    ],
+    detection: [
+      { company:'Blue Harbor AI',role:'Junior Backend Developer',status:'Review',date:'2026-10-23',evidence:'Possible application confirmation; user approval required',id:'DEMO-DET-1' },
+      { company:'Lumen Robotics',role:'Automation Engineering Intern',status:'Review',date:'2026-10-22',evidence:'Position filled — review, not automatic personal rejection',id:'DEMO-DET-2' }
+    ],
+    queue: [
+      { company:'Aurora Platforms',role:'Student Software Engineer',status:'Pending',date:'2026-10-24',evidence:'Review requisition ID before linking',id:'DEMO-Q-1' },
+      { company:'Blue Harbor AI',role:'Junior Backend Developer',status:'Pending',date:'2026-10-23',evidence:'Verify submission before creating an application',id:'DEMO-Q-2' }
+    ],
+    opportunities: [
+      { company:'Cedar Technologies',role:'Frontend Developer Student',status:'Open',date:'2026-10-24',evidence:'Fictional application form verified (demo claim only)',id:'DEMO-JOB-100' },
+      { company:'Marble Data',role:'Implementation Engineer',status:'Recheck',date:'2026-10-23',evidence:'Posting exists; application form not verified',id:'DEMO-JOB-101' },
+      { company:'Acorn Security',role:'Junior QA Engineer',status:'Archived',date:'2026-10-21',evidence:'Fictional role no longer available',id:'DEMO-JOB-102' }
+    ]
+  };
+  const config = {
+    applications: { title:'Applications',desc:'Explore tracked applications and their latest verified state.',caption:'Statuses are displayed without rewriting source records.',note:'Source of truth: Master Tracker. Recruitment emails alone never change an application status.' },
+    approvals: { title:'Approvals',desc:'Review candidates that require a user decision.',caption:'No approval button is connected in this demo.',note:'In the live workflow, a user must explicitly approve controlled writes. This demo intentionally cannot perform any actions.' },
+    detection: { title:'Application Detection',desc:'Identify potential submissions before creating any record.',caption:'A detected email is not proof of an approved application.',note:'Ambiguous messages and position-closure updates remain reviewable instead of becoming automatic rejections.' },
+    queue: { title:'Action Queue',desc:'See items that need a safe follow-up.',caption:'All action items shown are fictional.',note:'The queue represents suggested work. No automatic edits or submissions are possible in this offline preview.' },
+    opportunities: { title:'Job Opportunities',desc:'Separate opportunities from verified applications.',caption:'Availability labels here are examples, not current vacancies.',note:'Open, Recheck, and Archived are opportunity statuses; they are not application outcomes. Job IDs remain distinct.' }
+  };
+  const $ = id => document.getElementById(id);
+  const state = { tab:'applications', query:'', filter:'All' };
+  function countStatus(rows,status) {return rows.filter(row=>row.status===status).length;}
+  function statCard(label,value,caption) { return `<div class="stat"><span>${label}</span><strong>${value}</strong><small>${caption}</small></div>`; }
+  function render() {
+    const conf = config[state.tab]; const rows = fixture[state.tab];
+    $('page-title').textContent = conf.title;
+    $('page-description').textContent = conf.desc;
+    $('table-title').textContent = conf.title+' records';
+    $('table-caption').textContent = conf.caption;
+    $('explanation').textContent = conf.note;
+    const statuses = [...new Set(rows.map(row=>row.status))];
+    $('filter').replaceChildren(new Option('All statuses','All'), ...statuses.map(s=>new Option(s,s)));
+    $('filter').value = statuses.includes(state.filter) ? state.filter : 'All';
+    state.filter = $('filter').value;
+    let summary;
+    if(state.tab==='applications') summary = [ ['Total', rows.length,'Fictional records'], ['Active', countStatus(rows,'Active'),'Verified submissions'], ['Unverified', countStatus(rows,'Unverified'),'Needs evidence'], ['Inactive', countStatus(rows,'Rejected')+countStatus(rows,'Closed'),'Rejected or closed'] ];
+    else if(state.tab==='opportunities') summary = [ ['Total opportunities',rows.length,'Fictional records'], ['Open',countStatus(rows,'Open'),'Demo evidence'], ['Recheck',countStatus(rows,'Recheck'),'Verify availability'], ['Archived',countStatus(rows,'Archived'),'No longer active'] ];
+    else summary=[ ['Total',rows.length,'Synthetic records'], ['Needs review',rows.length,'No automatic writes'], ['Actions taken',0,'Read-only demo'], ['External API calls',0,'Offline only'] ];
+    $('stats').innerHTML = summary.map(item=>statCard(...item)).join('');
+    $('thead').innerHTML = '<tr><th>Company / role</th><th>Status</th><th>Last event</th><th>Evidence / reason</th><th>View</th></tr>';
+    const q = state.query.trim().toLowerCase();
+    const visible = rows.filter(row=>(state.filter==='All'||row.status===state.filter) && (!q||Object.values(row).some(value=>String(value).toLowerCase().includes(q))));
+    const tbody=$('tbody'); tbody.replaceChildren();
+    for(const row of visible) {
+      const tr=document.createElement('tr');
+      const title=document.createElement('td');
+      const company=document.createElement('strong'); company.textContent=row.company;
+      const role=document.createElement('span'); role.className='minor'; role.textContent=row.role;
+      title.append(company,role);
+      const status=document.createElement('td');
+      const badge=document.createElement('span');badge.className='pill '+row.status.toLowerCase();badge.textContent=row.status;status.append(badge);
+      const date=document.createElement('td');date.textContent=row.date;
+      const evidence=document.createElement('td');evidence.textContent=row.evidence;
+      const detail=document.createElement('td');const button=document.createElement('button');button.type='button';button.className='ghost';button.textContent='Details';button.addEventListener('click',()=>showDetails(row));detail.append(button);
+      tr.append(title,status,date,evidence,detail);tbody.append(tr);
+    }
+    $('empty').hidden = visible.length > 0;
+    document.querySelectorAll('[data-tab]').forEach(button=>button.setAttribute('aria-selected',String(button.dataset.tab===state.tab)));
+  }
+  function showDetails(row) {
+    $('detail-title').textContent=row.company;
+    const dl=$('detail-list');dl.replaceChildren();
+    [['Role',row.role],['Status',row.status],['Date',row.date],['Evidence',row.evidence],['Fictional ID',row.id],['Actions','Disabled in read-only demo']].forEach(([key,value])=>{
+      const dt=document.createElement('dt');dt.textContent=key;
+      const dd=document.createElement('dd');dd.textContent=value;
+      dl.append(dt,dd);
+    });
+    $('details').showModal();
+  }
+  document.querySelectorAll('[data-tab]').forEach(button=>button.addEventListener('click',()=>{
+    state.tab=button.dataset.tab;state.filter='All';state.query='';$('search').value='';render();
+  }));
+  $('search').addEventListener('input',event=>{state.query=event.target.value;render();});
+  $('filter').addEventListener('change',event=>{state.filter=event.target.value;render();});
+  $('close-details').addEventListener('click',()=>$('details').close());
+  render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "job-application-tracker",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Offline CI checks for a privacy-redacted Google Apps Script tracker",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

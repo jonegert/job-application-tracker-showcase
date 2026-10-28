@@ -1,0 +1,31 @@
+# Personal credentials and account config
+.env
+.env.*
+!.env.example
+.clasp.json
+credentials.json
+client_secret*.json
+*token*.txt
+*secret*.txt
+
+# Personal application records / exports
+private/
+data/
+backups/
+exports/
+*.csv
+*.xlsx
+*.xls
+*.zip
+
+# OS, tooling, logs
+.DS_Store
+node_modules/
+*.log
+coverage/
+
+# public release artifacts
+*.zip
+*.bak
+*.log
+__pycache__/

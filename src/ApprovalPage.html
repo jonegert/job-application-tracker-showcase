@@ -1,0 +1,3313 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+  <base target="_top">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+
+    * {
+
+      box-sizing: border-box;
+
+    }
+
+    body {
+
+      font-family: Arial, sans-serif;
+
+      background: #f5f7fb;
+
+      margin: 0;
+
+      padding: 24px;
+
+      color: #202124;
+
+    }
+
+    .container {
+
+      max-width: 1100px;
+
+      margin: auto;
+
+    }
+
+    .header {
+
+      margin-bottom: 24px;
+
+    }
+
+    .header h1 {
+
+      margin: 0 0 8px;
+
+      font-size: 28px;
+
+    }
+
+    .subtitle {
+
+      color: #667085;
+
+      font-size: 14px;
+
+    }
+
+    .tabs {
+
+      display: flex;
+
+      gap: 10px;
+
+      margin-bottom: 24px;
+
+      border-bottom: 1px solid #ddd;
+
+      overflow-x: auto;
+
+    }
+
+    .tab {
+
+      padding: 14px 20px;
+
+      background: none;
+
+      border: none;
+
+      cursor: pointer;
+
+      font-size: 15px;
+
+      font-weight: bold;
+
+      color: #667085;
+
+      border-bottom: 3px solid transparent;
+
+      white-space: nowrap;
+
+    }
+
+    .tab.active {
+
+      color: #1967d2;
+
+      border-bottom-color: #1967d2;
+
+    }
+
+    .panel {
+
+      display: none;
+
+    }
+
+    .panel.active {
+
+      display: block;
+
+    }
+
+    .summary-grid {
+
+      display: grid;
+
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+
+      gap: 14px;
+
+      margin-bottom: 24px;
+
+    }
+
+    .summary-card {
+
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 20px;
+
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+      border: 2px solid transparent;
+
+    }
+
+    .clickable-card {
+
+      cursor: pointer;
+
+    }
+
+    .summary-card.selected {
+
+      border-color: #1967d2;
+
+    }
+
+    .summary-label {
+
+      font-size: 13px;
+
+      color: #667085;
+
+      margin-bottom: 10px;
+
+    }
+
+    .summary-number {
+
+      font-size: 30px;
+
+      font-weight: bold;
+
+    }
+
+    .toolbar {
+
+      display: flex;
+
+      gap: 12px;
+
+      flex-wrap: wrap;
+
+      margin-bottom: 18px;
+
+    }
+
+    .search-input,
+
+    .filter-select {
+
+      padding: 12px;
+
+      border: 1px solid #d0d5dd;
+
+      border-radius: 8px;
+
+      font-size: 14px;
+
+      background: white;
+
+    }
+
+    .search-input {
+
+      flex: 1;
+
+      min-width: 220px;
+
+    }
+
+    .filter-select {
+
+      min-width: 180px;
+
+    }
+
+    .table-container {
+
+      background: white;
+
+      border-radius: 12px;
+
+      overflow-x: auto;
+
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+    }
+
+    table {
+
+      width: 100%;
+
+      border-collapse: collapse;
+
+      min-width: 750px;
+
+    }
+
+    th {
+
+      background: #f9fafb;
+
+      color: #667085;
+
+      font-size: 12px;
+
+      text-align: left;
+
+      padding: 16px;
+
+      border-bottom: 1px solid #eaecf0;
+
+    }
+
+    td {
+
+      padding: 16px;
+
+      border-bottom: 1px solid #eaecf0;
+
+      font-size: 14px;
+
+      vertical-align: top;
+
+    }
+
+    tr:hover {
+
+      background: #f9fbff;
+
+    }
+
+    .company-name {
+
+      font-weight: bold;
+
+    }
+
+    .status-badge {
+
+      display: inline-block;
+
+      padding: 6px 10px;
+
+      border-radius: 7px;
+
+      font-size: 12px;
+
+      font-weight: bold;
+
+      white-space: nowrap;
+
+    }
+
+    .status-active {
+
+      background: #e6f4ea;
+
+      color: #137333;
+
+    }
+
+    .status-rejected {
+
+      background: #fce8e6;
+
+      color: #c5221f;
+
+    }
+
+    .status-unverified {
+
+      background: #fff3cd;
+
+      color: #856404;
+
+    }
+
+    .status-outreach {
+
+      background: #e8f0fe;
+
+      color: #1967d2;
+
+    }
+
+    .status-notApplication {
+
+      background: #f1f3f4;
+
+      color: #5f6368;
+
+    }
+
+    .details-button {
+
+      border: 1px solid #d0d5dd;
+
+      background: white;
+
+      padding: 8px 12px;
+
+      border-radius: 7px;
+
+      cursor: pointer;
+
+    }
+
+    .details-button:hover {
+
+      background: #f1f5ff;
+
+    }
+
+    .details-row {
+
+      display: none;
+
+      background: #fafbfc;
+
+    }
+
+    .details-content {
+
+      padding: 18px;
+
+    }
+
+    .details-content p {
+
+      margin: 8px 0;
+
+      overflow-wrap: anywhere;
+
+    }
+
+    .approval-card {
+
+      background: white;
+
+      padding: 20px;
+
+      border-radius: 12px;
+
+      margin-bottom: 18px;
+
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+    }
+
+    .job-title {
+
+      font-size: 18px;
+
+      font-weight: bold;
+
+      margin-bottom: 12px;
+
+      overflow-wrap: anywhere;
+
+    }
+
+    .detail {
+
+      margin: 10px 0;
+
+      font-size: 14px;
+
+      overflow-wrap: anywhere;
+
+    }
+
+    .warning {
+
+      background: #fff3cd;
+
+      color: #856404;
+
+      padding: 10px;
+
+      border-radius: 8px;
+
+      margin-top: 12px;
+
+      font-size: 13px;
+
+    }
+
+    .linked-status {
+
+      background: #e6f4ea;
+
+      color: #137333;
+
+      padding: 12px;
+
+      border-radius: 8px;
+
+      margin-top: 14px;
+
+      font-size: 13px;
+
+      font-weight: bold;
+
+    }
+
+    .email-list {
+
+      margin-top: 16px;
+
+      padding-top: 12px;
+
+      border-top: 1px solid #eee;
+
+    }
+
+    .email-link {
+
+      display: block;
+
+      color: #1967d2;
+
+      text-decoration: none;
+
+      margin: 10px 0;
+
+      font-size: 14px;
+
+      overflow-wrap: anywhere;
+
+    }
+
+    .email-link:hover {
+
+      text-decoration: underline;
+
+    }
+
+    .badge {
+
+      display: inline-block;
+
+      padding: 5px 10px;
+
+      border-radius: 6px;
+
+      background: #e8f0fe;
+
+      color: #1967d2;
+
+      font-size: 12px;
+
+      font-weight: bold;
+
+      margin-bottom: 10px;
+
+    }
+
+    .rejection {
+
+      background: #fce8e6;
+
+      color: #c5221f;
+
+    }
+
+    .assessment {
+
+      background: #fef7e0;
+
+      color: #b06000;
+
+    }
+
+    .interview {
+
+      background: #e6f4ea;
+
+      color: #137333;
+
+    }
+
+    .detection-new {
+
+      background: #e6f4ea;
+
+      color: #137333;
+
+    }
+
+    .detection-verify {
+
+      background: #fff0db;
+
+      color: #a15c00;
+
+    }
+
+    .detection-review {
+
+      background: #fff3cd;
+
+      color: #856404;
+
+    }
+
+    .detection-verified {
+
+      background: #e8f0fe;
+
+      color: #1967d2;
+
+    }
+
+    .detection-toolbar {
+
+      margin-bottom: 20px;
+
+    }
+
+    .detection-notice {
+
+      background: #e8f0fe;
+
+      color: #174ea6;
+
+      border-radius: 10px;
+
+      padding: 14px 18px;
+
+      margin-bottom: 20px;
+
+      font-size: 13px;
+
+      line-height: 1.6;
+
+    }
+
+    .link-section {
+
+      margin-top: 16px;
+
+      padding: 14px;
+
+      background: #f8f9fa;
+
+      border-radius: 8px;
+
+    }
+
+    .link-label {
+
+      display: block;
+
+      font-weight: bold;
+
+      font-size: 14px;
+
+      margin-bottom: 10px;
+
+    }
+
+    .application-select {
+
+      width: 100%;
+
+      padding: 12px;
+
+      border: 1px solid #ccc;
+
+      border-radius: 8px;
+
+      font-size: 14px;
+
+      background: white;
+
+    }
+
+    .confirm-button {
+
+      width: 100%;
+
+      margin-top: 12px;
+
+      padding: 12px 18px;
+
+      border: none;
+
+      border-radius: 8px;
+
+      background: #1967d2;
+
+      color: white;
+
+      font-size: 14px;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+    }
+
+    .confirm-button:hover:not(:disabled) {
+
+      background: #1557b0;
+
+    }
+
+    .confirm-button:disabled {
+
+      opacity: 0.5;
+
+      cursor: not-allowed;
+
+    }
+
+    .help-text {
+
+      font-size: 12px;
+
+      color: #666;
+
+      margin-top: 10px;
+
+    }
+
+    .result-message {
+
+      font-size: 13px;
+
+      margin-top: 12px;
+
+      overflow-wrap: anywhere;
+
+    }
+
+    .loading {
+
+      text-align: center;
+
+      color: #667085;
+
+      padding: 30px;
+
+    }
+
+    .empty-state {
+
+      padding: 35px;
+
+      text-align: center;
+
+      color: #667085;
+
+    }
+
+    @media (max-width: 600px) {
+
+      body {
+
+        padding: 12px;
+
+      }
+
+      .header h1 {
+
+        font-size: 23px;
+
+      }
+
+      .tab {
+
+        padding: 12px;
+
+        font-size: 14px;
+
+      }
+
+      .approval-card {
+
+        padding: 16px;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+
+    <h1>Job Tracker</h1>
+
+    <div class="subtitle">
+
+      Applications & Approval Center
+
+    </div>
+
+  </div>
+
+  <!-- NAVIGATION -->
+
+  <div class="tabs">
+
+    <button
+
+      class="tab active"
+
+      data-tab="applications"
+
+      onclick="switchTab('applications')">
+
+      Applications
+
+    </button>
+
+    <button
+
+      class="tab"
+
+      data-tab="approvals"
+
+      onclick="switchTab('approvals')">
+
+      Approvals
+
+    </button>
+
+    <button
+
+      class="tab"
+
+      data-tab="detection"
+
+      onclick="switchTab('detection')">
+
+      Application Detection
+
+    </button>
+
+  </div>
+
+  <!-- APPLICATIONS -->
+
+  <div id="applications-panel" class="panel active">
+
+    <div id="applications-loading" class="loading">
+
+      Loading applications...
+
+    </div>
+
+    <div id="applications-content" style="display:none;">
+
+      <div id="summary" class="summary-grid"></div>
+
+      <div class="toolbar">
+
+        <input
+
+          id="application-search"
+
+          class="search-input"
+
+          type="text"
+
+          placeholder="Search company or role..."
+
+          oninput="renderApplications()">
+
+        <select
+
+          id="application-filter"
+
+          class="filter-select"
+
+          onchange="renderApplications()">
+
+          <option value="all">All records</option>
+
+          <option value="active">Active</option>
+
+          <option value="rejected">Rejected</option>
+
+          <option value="unverified">Unverified</option>
+
+          <option value="outreach">Outreach & Leads</option>
+
+          <option value="optedOut">Opted Out</option>
+
+          <option value="notApplication">Not an Application</option>
+
+        </select>
+
+      </div>
+
+      <div class="table-container">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>Company</th>
+
+              <th>Role</th>
+
+              <th>Category</th>
+
+              <th>Current Status</th>
+
+              <th>Details</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="applications-table"></tbody>
+
+        </table>
+
+      </div>
+
+      <div
+
+        id="applications-empty"
+
+        class="empty-state"
+
+        style="display:none;">
+
+        No matching records found.
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- APPROVALS -->
+
+  <div id="approvals-panel" class="panel">
+
+    <div id="approvals-loading" class="loading">
+
+      Loading pending updates...
+
+    </div>
+
+    <div id="approvals"></div>
+
+  </div>
+
+  <!-- APPLICATION DETECTION -->
+
+  <div id="detection-panel" class="panel">
+
+    <div class="detection-notice">
+
+      <strong>Application Detection — Approval Center</strong><br>
+
+      Suggested matches are based on application confirmation emails.
+
+      No applications or statuses will be changed automatically.
+
+      New candidates can be created only after explicit approval.
+
+      Existing and uncertain applications remain protected.
+
+    </div>
+
+    <div
+
+      id="detection-loading"
+
+      class="loading">
+
+      Analyzing application confirmations...
+
+    </div>
+
+    <div
+
+      id="detection-content"
+
+      style="display:none;">
+
+      <div
+
+        id="detection-summary"
+
+        class="summary-grid">
+
+      </div>
+
+      <div class="toolbar detection-toolbar">
+
+        <input
+
+          id="detection-search"
+
+          class="search-input"
+
+          type="text"
+
+          placeholder="Search company, role or Job ID..."
+
+          oninput="renderDetectionResults()">
+
+        <select
+
+          id="detection-filter"
+
+          class="filter-select"
+
+          onchange="renderDetectionResults()">
+
+          <option value="all">All detections</option>
+
+          <option value="CREATE NEW">New candidates</option>
+
+          <option value="VERIFY EXISTING">Verify existing</option>
+
+          <option value="NEEDS REVIEW">Needs review</option>
+
+          <option value="ALREADY VERIFIED">Already verified</option>
+
+        </select>
+
+      </div>
+
+      <div id="detection-results"></div>
+
+      <div
+
+        id="detection-empty"
+
+        class="empty-state"
+
+        style="display:none;">
+
+        No matching detections found.
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+  // ==========================================
+
+  // GLOBAL STATE
+
+  // ==========================================
+
+  let allApplications = [];
+
+  let allDetections = [];
+
+  let approvalInProgress = false;
+
+  const categoryLabels = {
+
+    active: 'Active',
+
+    rejected: 'Rejected',
+
+    unverified: 'Unverified',
+
+    outreach: 'Outreach & Leads',
+
+    optedOut: 'Opted Out',
+
+    notApplication: 'Not an Application'
+
+  };
+
+  const detectionLabels = {
+
+    'CREATE NEW': 'New application candidate',
+
+    'VERIFY EXISTING': 'Verify existing',
+
+    'ALREADY VERIFIED': 'Already verified',
+
+    'NEEDS REVIEW': 'Needs review'
+
+  };
+
+  const detectionClasses = {
+
+    'CREATE NEW': 'detection-new',
+
+    'VERIFY EXISTING': 'detection-verify',
+
+    'ALREADY VERIFIED': 'detection-verified',
+
+    'NEEDS REVIEW': 'detection-review'
+
+  };
+
+  // ==========================================
+
+  // NAVIGATION
+
+  // ==========================================
+
+  function switchTab(tab) {
+
+    document.querySelectorAll('.tab').forEach(function(button) {
+
+      button.classList.remove('active');
+
+    });
+
+    document.querySelectorAll('.panel').forEach(function(panel) {
+
+      panel.classList.remove('active');
+
+    });
+
+    const panel = document.getElementById(tab + '-panel');
+
+    const button = document.querySelector(
+
+      '.tab[data-tab="' + tab + '"]'
+
+    );
+
+    if (panel) {
+
+      panel.classList.add('active');
+
+    }
+
+    if (button) {
+
+      button.classList.add('active');
+
+    }
+
+  }
+
+  // ==========================================
+
+  // APPLICATIONS — LOAD
+
+  // ==========================================
+
+  function loadApplications() {
+
+    google.script.run
+
+      .withSuccessHandler(function(data) {
+
+        allApplications = data.applications || [];
+
+        renderSummary(data.summary || {});
+
+        renderApplications();
+
+        document.getElementById('applications-loading')
+
+          .style.display = 'none';
+
+        document.getElementById('applications-content')
+
+          .style.display = 'block';
+
+      })
+
+      .withFailureHandler(function(error) {
+
+        document.getElementById('applications-loading')
+
+          .textContent =
+
+          'Error loading applications: ' +
+
+          getErrorMessage(error);
+
+      })
+
+      .getApplicationsDashboardFixed();
+
+  }
+
+  // ==========================================
+
+  // APPLICATIONS — SUMMARY
+
+  // ==========================================
+
+  function renderSummary(summary) {
+
+    const container = document.getElementById('summary');
+
+    container.innerHTML = '';
+
+    const categories = [
+
+      ['all', 'Total', summary.total || 0],
+
+      ['active', 'Active', summary.active || 0],
+
+      ['optedOut', 'Opted Out', summary.optedOut || 0],
+
+      ['rejected', 'Rejected', summary.rejected || 0],
+
+      ['unverified', 'Unverified', summary.unverified || 0],
+
+      ['outreach', 'Outreach & Leads', summary.outreach || 0]
+
+    ];
+
+    categories.forEach(function(item) {
+
+      const card = document.createElement('div');
+
+      card.className = 'summary-card clickable-card';
+
+      const label = document.createElement('div');
+
+      label.className = 'summary-label';
+
+      label.textContent = item[1];
+
+      const number = document.createElement('div');
+
+      number.className = 'summary-number';
+
+      number.textContent = item[2];
+
+      card.appendChild(label);
+
+      card.appendChild(number);
+
+      card.addEventListener('click', function() {
+
+        document.getElementById('application-filter').value = item[0];
+
+        renderApplications();
+
+      });
+
+      container.appendChild(card);
+
+    });
+
+  }
+
+  // ==========================================
+
+  // APPLICATIONS — TABLE
+
+  // ==========================================
+
+  function renderApplications() {
+
+    const search = document.getElementById('application-search')
+
+      .value.trim().toLowerCase();
+
+    const filter = document.getElementById('application-filter').value;
+
+    const tbody = document.getElementById('applications-table');
+
+    const empty = document.getElementById('applications-empty');
+
+    tbody.innerHTML = '';
+
+    const filtered = allApplications.filter(function(app) {
+
+      const matchesSearch =
+
+        String(app.company || '').toLowerCase().includes(search) ||
+
+        String(app.role || '').toLowerCase().includes(search);
+
+      const matchesFilter =
+
+        filter === 'all' || app.category === filter;
+
+      return matchesSearch && matchesFilter;
+
+    });
+
+    empty.style.display =
+
+      filtered.length === 0 ? 'block' : 'none';
+
+    filtered.forEach(function(app) {
+
+      const row = document.createElement('tr');
+
+      const companyCell = document.createElement('td');
+
+      companyCell.className = 'company-name';
+
+      companyCell.textContent = app.company;
+
+      const roleCell = document.createElement('td');
+
+      roleCell.textContent = app.role || '—';
+
+      const categoryCell = document.createElement('td');
+
+      const badge = document.createElement('span');
+
+      badge.className =
+
+        'status-badge status-' + app.category;
+
+      badge.textContent =
+
+        categoryLabels[app.category] || app.category;
+
+      categoryCell.appendChild(badge);
+
+      const statusCell = document.createElement('td');
+
+      statusCell.textContent = app.status || 'Unknown';
+
+      const detailsCell = document.createElement('td');
+
+      const button = document.createElement('button');
+
+      button.className = 'details-button';
+
+      button.textContent = 'View details';
+
+      detailsCell.appendChild(button);
+
+      row.appendChild(companyCell);
+
+      row.appendChild(roleCell);
+
+      row.appendChild(categoryCell);
+
+      row.appendChild(statusCell);
+
+      row.appendChild(detailsCell);
+
+      const detailsRow = document.createElement('tr');
+
+      detailsRow.className = 'details-row';
+
+      const detailsTd = document.createElement('td');
+
+      detailsTd.colSpan = 5;
+
+      const content = document.createElement('div');
+
+      content.className = 'details-content';
+
+      const labels = [
+
+        'Company',
+
+        'Exact role / best known',
+
+        'Job ID',
+
+        'Evidence category',
+
+        'Current status (as known)',
+
+        'Application date',
+
+        'Last update',
+
+        'Recommended next action',
+
+        'Evidence / caveat',
+
+        'Application ID'
+
+      ];
+
+      (app.details || []).forEach(function(value, index) {
+
+        if (!value) return;
+
+        const p = document.createElement('p');
+
+        const strong = document.createElement('strong');
+
+        strong.textContent =
+
+          (labels[index] || 'Column ' + (index + 1)) + ': ';
+
+        p.appendChild(strong);
+
+        p.appendChild(
+
+          document.createTextNode(String(value))
+
+        );
+
+        content.appendChild(p);
+
+      });
+
+      detailsTd.appendChild(content);
+
+      detailsRow.appendChild(detailsTd);
+
+      button.addEventListener('click', function() {
+
+        const open =
+
+          detailsRow.style.display === 'table-row';
+
+        detailsRow.style.display =
+
+          open ? 'none' : 'table-row';
+
+        button.textContent =
+
+          open ? 'View details' : 'Hide details';
+
+      });
+
+      tbody.appendChild(row);
+
+      tbody.appendChild(detailsRow);
+
+    });
+
+  }
+
+  // ==========================================
+
+  // SHARED HELPERS
+
+  // ==========================================
+
+  function normalizeCompany(value) {
+
+    return String(value || '').trim().toLowerCase();
+
+  }
+
+  function getErrorMessage(error) {
+
+    return error && error.message
+
+      ? error.message
+
+      : String(error);
+
+  }
+
+  function addDetail(card, label, value) {
+
+    const p = document.createElement('p');
+
+    p.className = 'detail';
+
+    const strong = document.createElement('strong');
+
+    strong.textContent = label + ': ';
+
+    p.appendChild(strong);
+
+    p.appendChild(
+
+      document.createTextNode(String(value))
+
+    );
+
+    card.appendChild(p);
+
+  }
+
+  // ==========================================
+
+  // APPROVALS — LINK EXISTING
+
+  // ==========================================
+
+  function addLinkSection(card, item, applications) {
+
+    const section = document.createElement('div');
+
+    section.className = 'link-section';
+
+    const label = document.createElement('label');
+
+    label.className = 'link-label';
+
+    label.textContent = '🔗 Link to existing application:';
+
+    const select = document.createElement('select');
+
+    select.className = 'application-select';
+
+    const defaultOption = document.createElement('option');
+
+    defaultOption.value = '';
+
+    defaultOption.textContent = 'Select an application';
+
+    select.appendChild(defaultOption);
+
+    const matching = applications.filter(function(app) {
+
+      return normalizeCompany(app.company) ===
+
+             normalizeCompany(item.company);
+
+    });
+
+    matching.forEach(function(app) {
+
+      const option = document.createElement('option');
+
+      option.value = String(app.applicationId || '');
+
+      option.textContent = app.role;
+
+      select.appendChild(option);
+
+    });
+
+    if (matching.length === 0) {
+
+      defaultOption.textContent =
+
+        'No existing application found';
+
+      select.disabled = true;
+
+    }
+
+    const messageIds = (item.events || [])
+
+      .map(function(event) {
+
+        return String(event.messageId || '').trim();
+
+      })
+
+      .filter(Boolean);
+
+    const uniqueId = messageIds.length
+
+      ? messageIds[0]
+
+      : String(Math.random());
+
+    select.id = 'application-' + uniqueId;
+
+    label.htmlFor = select.id;
+
+    const button = document.createElement('button');
+
+    button.className = 'confirm-button';
+
+    button.textContent = 'Confirm Link';
+
+    button.disabled = true;
+
+    const info = document.createElement('p');
+
+    info.className = 'help-text';
+
+    info.textContent =
+
+      'The link will be saved in Email Links using a permanent Application ID. Master Tracker will not be changed.';
+
+    const result = document.createElement('p');
+
+    result.className = 'result-message';
+
+    result.setAttribute('role', 'status');
+
+    select.addEventListener('change', function() {
+
+      button.disabled = !select.value;
+
+    });
+
+    button.addEventListener('click', function() {
+
+      if (!select.value) return;
+
+      if (messageIds.length !== 1) {
+
+        result.textContent =
+
+          '⚠️ This card contains multiple emails. Linking multiple emails is not supported yet.';
+
+        result.style.color = '#856404';
+
+        return;
+
+      }
+
+      const selectedOption =
+
+        select.options[select.selectedIndex];
+
+      const selectedRole =
+
+        selectedOption ? selectedOption.textContent : '';
+
+      const confirmed = window.confirm(
+
+        'Confirm email link:\n\n' +
+
+        'Company: ' + item.company + '\n' +
+
+        'Application: ' + selectedRole + '\n\n' +
+
+        'This will save the link in Email Links.\n' +
+
+        'Master Tracker will not be changed.'
+
+      );
+
+      if (!confirmed) return;
+
+      button.disabled = true;
+
+      select.disabled = true;
+
+      button.textContent = 'Saving...';
+
+      result.textContent = 'Saving link...';
+
+      google.script.run
+
+        .withSuccessHandler(function(message) {
+
+          result.textContent = '✅ ' + message;
+
+          result.style.color = '#137333';
+
+          button.textContent = 'Linked';
+
+          button.disabled = true;
+
+          select.disabled = true;
+
+        })
+
+        .withFailureHandler(function(error) {
+
+          result.textContent =
+
+            '❌ ' + getErrorMessage(error);
+
+          result.style.color = '#c5221f';
+
+          button.textContent = 'Confirm Link';
+
+          select.disabled = false;
+
+          button.disabled = !select.value;
+
+        })
+
+        .saveEmailLink(messageIds[0], select.value);
+
+    });
+
+    section.appendChild(label);
+
+    section.appendChild(select);
+
+    section.appendChild(button);
+
+    section.appendChild(info);
+
+    section.appendChild(result);
+
+    card.appendChild(section);
+
+  }
+
+  // ==========================================
+
+  // APPROVALS — RENDER
+
+  // ==========================================
+
+  function renderApprovals(items, applications) {
+
+    document.getElementById('approvals-loading')
+
+      .style.display = 'none';
+
+    const container = document.getElementById('approvals');
+
+    container.innerHTML = '';
+
+    if (!items || items.length === 0) {
+
+      container.textContent = 'No pending updates.';
+
+      return;
+
+    }
+
+    items.forEach(function(item) {
+
+      const card = document.createElement('div');
+
+      card.className = 'approval-card';
+
+      const title = document.createElement('div');
+
+      title.className = 'job-title';
+
+      title.textContent =
+
+        item.company + ' – ' + item.role;
+
+      card.appendChild(title);
+
+      const badge = document.createElement('span');
+
+      badge.className = 'badge';
+
+      if (item.latestEvent === 'REJECTION') {
+
+        badge.classList.add('rejection');
+
+      }
+
+      if (item.latestEvent === 'ASSESSMENT') {
+
+        badge.classList.add('assessment');
+
+      }
+
+      if (item.latestEvent === 'INTERVIEW') {
+
+        badge.classList.add('interview');
+
+      }
+
+      badge.textContent = item.latestEvent || 'UPDATE';
+
+      card.appendChild(badge);
+
+      addDetail(
+
+        card,
+
+        'Number of emails',
+
+        (item.emails || []).length
+
+      );
+
+      if (item.latestDate) {
+
+        const date = new Date(item.latestDate);
+
+        if (!isNaN(date.getTime())) {
+
+          addDetail(
+
+            card,
+
+            'Last update',
+
+            date.toLocaleString('en-GB')
+
+          );
+
+        }
+
+      }
+
+      if (item.linked && item.applicationId) {
+
+        const linked = document.createElement('div');
+
+        linked.className = 'linked-status';
+
+        linked.textContent =
+
+          '✓ Linked to existing application';
+
+        card.appendChild(linked);
+
+      } else if (item.needsReview) {
+
+        const warning = document.createElement('div');
+
+        warning.className = 'warning';
+
+        warning.textContent =
+
+          '⚠️ Company or position needs verification before approval.';
+
+        card.appendChild(warning);
+
+        addLinkSection(card, item, applications);
+
+      }
+
+      const emailList = document.createElement('div');
+
+      emailList.className = 'email-list';
+
+      const emailTitle = document.createElement('strong');
+
+      emailTitle.textContent = 'Related emails:';
+
+      emailList.appendChild(emailTitle);
+
+      (item.emails || []).forEach(function(email, index) {
+
+        const link = document.createElement('a');
+
+        link.className = 'email-link';
+
+        link.textContent =
+
+          '📩 View email ' + (index + 1) +
+
+          (email.subject ? ' – ' + email.subject : '');
+
+        if (email.link) {
+
+          link.href = email.link;
+
+          link.target = '_blank';
+
+          link.rel = 'noopener noreferrer';
+
+        } else {
+
+          link.removeAttribute('href');
+
+        }
+
+        emailList.appendChild(link);
+
+      });
+
+      card.appendChild(emailList);
+
+      container.appendChild(card);
+
+    });
+
+  }
+
+  // ==========================================
+
+  // APPROVALS — LOAD
+
+  // ==========================================
+
+  function showApprovalsError(error) {
+
+    document.getElementById('approvals-loading')
+
+      .textContent =
+
+      'Error loading updates: ' +
+
+      getErrorMessage(error);
+
+  }
+
+  function loadApprovals() {
+
+    google.script.run
+
+      .withSuccessHandler(function(applications) {
+
+        google.script.run
+
+          .withSuccessHandler(function(items) {
+
+            renderApprovals(items, applications || []);
+
+          })
+
+          .withFailureHandler(showApprovalsError)
+
+          .getGroupedApprovals();
+
+      })
+
+      .withFailureHandler(showApprovalsError)
+
+      .getExistingApplications();
+
+  }
+
+  // ==========================================
+
+  // APPLICATION DETECTION — LOAD
+
+  // ==========================================
+
+  function loadDetection() {
+
+    google.script.run
+
+      .withSuccessHandler(function(data) {
+
+        allDetections = data.applications || [];
+
+        renderDetectionSummary(data.summary || {});
+
+        renderDetectionResults();
+
+        document.getElementById('detection-loading')
+
+          .style.display = 'none';
+
+        document.getElementById('detection-content')
+
+          .style.display = 'block';
+
+      })
+
+      .withFailureHandler(function(error) {
+
+        document.getElementById('detection-loading')
+
+          .textContent =
+
+          'Error loading detection: ' +
+
+          getErrorMessage(error);
+
+      })
+
+      .getApplicationDetectionResults();
+
+  }
+
+  // ==========================================
+
+  // APPLICATION DETECTION — SUMMARY
+
+  // ==========================================
+
+  function renderDetectionSummary(summary) {
+
+    const container =
+
+      document.getElementById('detection-summary');
+
+    container.innerHTML = '';
+
+    const cards = [
+
+      ['all', 'Detected groups', summary.uniqueGroups || 0],
+
+      ['CREATE NEW', 'New candidates', summary.createNew || 0],
+
+      ['VERIFY EXISTING', 'Verify existing', summary.verifyExisting || 0],
+
+      ['NEEDS REVIEW', 'Needs review', summary.needsReview || 0],
+
+      ['ALREADY VERIFIED', 'Already verified', summary.alreadyVerified || 0]
+
+    ];
+
+    cards.forEach(function(item) {
+
+      const card = document.createElement('div');
+
+      card.className = 'summary-card clickable-card';
+
+      const label = document.createElement('div');
+
+      label.className = 'summary-label';
+
+      label.textContent = item[1];
+
+      const number = document.createElement('div');
+
+      number.className = 'summary-number';
+
+      number.textContent = item[2];
+
+      card.appendChild(label);
+
+      card.appendChild(number);
+
+      card.addEventListener('click', function() {
+
+        document.getElementById('detection-filter').value =
+
+          item[0];
+
+        renderDetectionResults();
+
+      });
+
+      container.appendChild(card);
+
+    });
+
+  }
+
+  // ==========================================
+
+  // APPLICATION DETECTION — APPROVAL
+
+  // ==========================================
+
+  function addCreateApprovalSection(card, app) {
+
+    const section = document.createElement('div');
+
+    section.className = 'link-section';
+
+    const label = document.createElement('div');
+
+    label.className = 'link-label';
+
+    label.textContent = 'Create verified application';
+
+    const description = document.createElement('p');
+
+    description.className = 'help-text';
+
+    description.textContent =
+
+      'After confirmation, one application will be added to Master Tracker and its confirmation emails will be linked. Existing applications will not be modified.';
+
+    const button = document.createElement('button');
+
+    button.className = 'confirm-button';
+
+    button.textContent = 'Approve & Create';
+
+    const result = document.createElement('p');
+
+    result.className = 'result-message';
+
+    result.setAttribute('role', 'status');
+
+    button.addEventListener('click', function() {
+
+      if (approvalInProgress) {
+
+        result.textContent =
+
+          'Another approval is already in progress.';
+
+        return;
+
+      }
+
+      const messageIds = (app.emails || [])
+
+        .map(function(email) {
+
+          return String(email.messageId || '').trim();
+
+        })
+
+        .filter(Boolean);
+
+      if (messageIds.length === 0) {
+
+        result.textContent =
+
+          '❌ No confirmation email IDs were found.';
+
+        result.style.color = '#c5221f';
+
+        return;
+
+      }
+
+      const confirmed = window.confirm(
+
+        'Approve creation of this application?\n\n' +
+
+        'Company: ' + app.company + '\n' +
+
+        'Role: ' + app.role + '\n' +
+
+        'Job ID: ' + (app.jobId || 'Not provided') + '\n' +
+
+        'Confirmation emails: ' + messageIds.length + '\n\n' +
+
+        'This will create a new Master Tracker record and link the emails.\n\n' +
+
+        'Existing application statuses will not be changed.'
+
+      );
+
+      if (!confirmed) return;
+
+      approvalInProgress = true;
+
+      button.disabled = true;
+
+      button.textContent = 'Creating...';
+
+      result.textContent =
+
+        'Checking for duplicates and saving application...';
+
+      result.style.color = '#667085';
+
+      google.script.run
+
+        .withSuccessHandler(function(response) {
+
+          approvalInProgress = false;
+
+          result.textContent =
+
+            '✅ Application created successfully. ID: ' +
+
+            response.applicationId;
+
+          result.style.color = '#137333';
+
+          button.textContent = 'Created';
+
+          button.disabled = true;
+
+          // Refresh all relevant views.
+
+          loadApplications();
+
+          loadDetection();
+
+          loadApprovals();
+
+        })
+
+        .withFailureHandler(function(error) {
+
+          approvalInProgress = false;
+
+          result.textContent =
+
+            '❌ ' + getErrorMessage(error) +
+
+            ' Check Master Tracker and Email Links before retrying.';
+
+          result.style.color = '#c5221f';
+
+          button.textContent = 'Approve & Create';
+
+          // Do not automatically retry after a failed write.
+
+          // A partial write may already exist.
+
+          button.disabled = true;
+
+        })
+
+        .approveNewApplication(
+
+          messageIds,
+
+          app.company,
+
+          app.role,
+
+          app.jobId || ''
+
+        );
+
+    });
+
+    section.appendChild(label);
+
+    section.appendChild(description);
+
+    section.appendChild(button);
+
+    section.appendChild(result);
+
+    card.appendChild(section);
+
+  }
+
+  // ==========================================
+
+  // APPLICATION DETECTION — RESULTS
+
+  // ==========================================
+
+  function renderDetectionResults() {
+
+    const search =
+
+      document.getElementById('detection-search')
+
+        .value.trim().toLowerCase();
+
+    const filter =
+
+      document.getElementById('detection-filter').value;
+
+    const container =
+
+      document.getElementById('detection-results');
+
+    const empty =
+
+      document.getElementById('detection-empty');
+
+    container.innerHTML = '';
+
+    const filtered = allDetections.filter(function(app) {
+
+      const matchesSearch =
+
+        String(app.company || '').toLowerCase().includes(search) ||
+
+        String(app.role || '').toLowerCase().includes(search) ||
+
+        String(app.jobId || '').toLowerCase().includes(search);
+
+      const matchesFilter =
+
+        filter === 'all' || app.decision === filter;
+
+      return matchesSearch && matchesFilter;
+
+    });
+
+    empty.style.display =
+
+      filtered.length === 0 ? 'block' : 'none';
+
+    filtered.forEach(function(app) {
+
+      const card = document.createElement('div');
+
+      card.className = 'approval-card';
+
+      // Company and role
+
+      const title = document.createElement('div');
+
+      title.className = 'job-title';
+
+      title.textContent =
+
+        (app.company || 'Unknown company') +
+
+        ' – ' +
+
+        (app.role || 'Role unknown');
+
+      card.appendChild(title);
+
+      // Decision badge
+
+      const badge = document.createElement('span');
+
+      badge.className =
+
+        'badge ' +
+
+        (detectionClasses[app.decision] || '');
+
+      badge.textContent =
+
+        detectionLabels[app.decision] ||
+
+        app.decision ||
+
+        'Unknown';
+
+      card.appendChild(badge);
+
+      // Job ID
+
+      if (app.jobId) {
+
+        addDetail(card, 'Job ID', app.jobId);
+
+      }
+
+      // Reason
+
+      addDetail(
+
+        card,
+
+        'Detection reason',
+
+        app.reason || '—'
+
+      );
+
+      // Email count
+
+      addDetail(
+
+        card,
+
+        'Confirmation emails',
+
+        app.emailCount || 0
+
+      );
+
+      // Existing Application ID
+
+      if (app.applicationId) {
+
+        addDetail(
+
+          card,
+
+          'Existing Application ID',
+
+          app.applicationId
+
+        );
+
+      }
+
+      // Warning for uncertain cases
+
+      if (app.decision === 'NEEDS REVIEW') {
+
+        const warning = document.createElement('div');
+
+        warning.className = 'warning';
+
+        warning.textContent =
+
+          '⚠️ Manual verification required before creating or updating an application.';
+
+        card.appendChild(warning);
+
+      }
+
+      // New candidates
+
+      if (app.decision === 'CREATE NEW') {
+
+        const notice = document.createElement('div');
+
+        notice.className = 'linked-status';
+
+        notice.textContent =
+
+          '✓ New application candidate detected. No record has been created yet.';
+
+        card.appendChild(notice);
+
+        // Explicit approval control
+
+        addCreateApprovalSection(card, app);
+
+      }
+
+      // Related emails
+
+      const emailList = document.createElement('div');
+
+      emailList.className = 'email-list';
+
+      const emailTitle = document.createElement('strong');
+
+      emailTitle.textContent = 'Related emails:';
+
+      emailList.appendChild(emailTitle);
+
+      (app.emails || []).forEach(function(email, index) {
+
+        const link = document.createElement('a');
+
+        link.className = 'email-link';
+
+        link.textContent =
+
+          '📩 ' +
+
+          (email.subject || 'View email ' + (index + 1));
+
+        if (email.messageId) {
+
+          link.href =
+
+            'https://mail.google.com/mail/u/0/#all/' +
+
+            encodeURIComponent(email.messageId);
+
+          link.target = '_blank';
+
+          link.rel = 'noopener noreferrer';
+
+        } else {
+
+          link.removeAttribute('href');
+
+        }
+
+        emailList.appendChild(link);
+
+      });
+
+      card.appendChild(emailList);
+
+      container.appendChild(card);
+
+    });
+
+  }
+
+  // ==========================================
+
+  // INITIAL LOAD
+
+  // ==========================================
+
+  window.addEventListener('load', function() {
+
+    loadApplications();
+
+    loadApprovals();
+
+    loadDetection();
+
+  });
+/**
+ * JOB TRACKER — ACTION QUEUE UI v1
+ *
+ * Displays central-engine recommendations.
+ * Only exact email linking is enabled.
+ * All other actions remain read-only.
+ */
+function jtInitActionQueueUI() {
+  const tabs = document.querySelector('.tabs');
+  const container = document.querySelector('.container');
+
+  if (!tabs || !container) {
+    throw new Error('Approval Center layout not found');
+  }
+
+  const tab = document.createElement('button');
+  tab.className = 'tab';
+  tab.dataset.tab = 'actionqueue';
+  tab.textContent = 'Action Queue';
+  tabs.appendChild(tab);
+
+  const panel = document.createElement('div');
+  panel.id = 'actionqueue-panel';
+  panel.className = 'panel';
+  container.appendChild(panel);
+
+  const heading = document.createElement('h2');
+  heading.textContent = 'Action Queue';
+  panel.appendChild(heading);
+
+  const explanation = document.createElement('p');
+  explanation.className = 'subtitle';
+  explanation.textContent =
+    'Review detected events. No status changes happen automatically.';
+  panel.appendChild(explanation);
+
+  const toolbar = document.createElement('div');
+  toolbar.className = 'toolbar';
+  panel.appendChild(toolbar);
+
+  const filter = document.createElement('select');
+  filter.className = 'filter-select';
+
+  [
+    ['ATTENTION', 'Needs review'],
+    ['ALL', 'All emails'],
+    ['LINK_EXISTING', 'Link existing'],
+    ['REVIEW_LINKED_EVENT', 'Already linked'],
+    ['REVIEW_STATUS', 'Review status'],
+    ['MANUAL_REVIEW', 'Manual review'],
+    ['REVIEW_CLASSIFICATION', 'Classification conflicts'],
+    ['REVIEW_NEW_APPLICATION', 'Possible new applications'],
+    ['REVIEW_POSSIBLE_MATCH', 'Possible matches']
+  ].forEach(function(optionData) {
+    const option = document.createElement('option');
+    option.value = optionData[0];
+    option.textContent = optionData[1];
+    filter.appendChild(option);
+  });
+
+  toolbar.appendChild(filter);
+  filter.value = 'ATTENTION';
+
+  const refresh = document.createElement('button');
+  refresh.className = 'details-button';
+  refresh.textContent = 'Refresh';
+  toolbar.appendChild(refresh);
+
+  const bulkButton = document.createElement('button');
+  bulkButton.className = 'confirm-button';
+  bulkButton.style.width = 'auto';
+  bulkButton.style.marginTop = '0';
+  bulkButton.disabled = true;
+  bulkButton.textContent = 'Review selected rejections (0)';
+  toolbar.appendChild(bulkButton);
+
+  const bulkNotice = document.createElement('p');
+  bulkNotice.className = 'result-message';
+  bulkNotice.setAttribute('role', 'status');
+  panel.appendChild(bulkNotice);
+
+  const status = document.createElement('p');
+  status.className = 'subtitle';
+  panel.appendChild(status);
+
+  const results = document.createElement('div');
+  panel.appendChild(results);
+
+  let queue = [];
+  let busy = false;
+  const selectedRejections = new Set();
+
+  // Only a rejection that matches exactly one already-rejected Master
+  // record can be offered for closing. A human must verify the email first.
+  function isVerifiedRejectionCandidate(item) {
+    const apps = item.candidates || [];
+    return item.proposedAction === 'REVIEW_STATUS' &&
+      item.storedEvent === 'REJECTION' &&
+      item.liveEvent === 'REJECTION' &&
+      apps.length === 1 &&
+      Boolean(apps[0].applicationId) &&
+      /reject|declin|not selected|not moving forward|נדח|דחייה/i.test(
+        String(apps[0].status || '')
+      );
+  }
+
+  function updateBulkButton() {
+    bulkButton.textContent =
+      'Review selected rejections (' + selectedRejections.size + ')';
+    bulkButton.disabled = busy || selectedRejections.size === 0;
+  }
+
+  function addLine(card, label, value) {
+    const line = document.createElement('p');
+    line.className = 'detail';
+
+    const strong = document.createElement('strong');
+    strong.textContent = label + ': ';
+
+    line.appendChild(strong);
+    line.appendChild(
+      document.createTextNode(String(value || '—'))
+    );
+
+    card.appendChild(line);
+  }
+
+  function render() {
+    results.replaceChildren();
+
+    const visible = queue.filter(function(item) {
+      if (filter.value === 'ALL') {
+        return true;
+      }
+
+      if (filter.value === 'ATTENTION') {
+        return item.proposedAction !== 'REVIEW_LINKED_EVENT' ||
+          item.storedEvent !== item.liveEvent;
+      }
+
+      return item.proposedAction === filter.value;
+    });
+
+    status.textContent =
+      visible.length + ' displayed / ' +
+      queue.length + ' pending emails';
+
+    if (!visible.length) {
+      const empty = document.createElement('p');
+      empty.textContent = 'No actions in this category.';
+      results.appendChild(empty);
+      return;
+    }
+
+    visible.forEach(function(item) {
+      const card = document.createElement('div');
+      card.className = 'approval-card';
+
+      const title = document.createElement('div');
+      title.className = 'job-title';
+      title.textContent =
+        (item.company || 'Unknown company') +
+        ' — ' +
+        (item.role || 'Role not identified');
+
+      card.appendChild(title);
+
+      const badge = document.createElement('span');
+      badge.className = 'badge';
+      badge.textContent = item.proposedAction;
+      card.appendChild(badge);
+
+      if (isVerifiedRejectionCandidate(item)) {
+        const choose = document.createElement('label');
+        choose.className = 'link-section';
+        choose.style.display = 'flex';
+        choose.style.gap = '10px';
+        choose.style.alignItems = 'flex-start';
+        choose.style.cursor = 'pointer';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = selectedRejections.has(item.messageId);
+        checkbox.disabled = busy;
+        checkbox.addEventListener('change', function() {
+          if (checkbox.checked) {
+            selectedRejections.add(item.messageId);
+          } else {
+            selectedRejections.delete(item.messageId);
+          }
+          updateBulkButton();
+        });
+
+        const chooseText = document.createElement('span');
+        chooseText.textContent =
+          'I opened this email and verified it is the rejection for ' +
+          item.candidates[0].role + '. Select for review closure.';
+        choose.appendChild(checkbox);
+        choose.appendChild(chooseText);
+        card.appendChild(choose);
+      }
+
+      addLine(card, 'Current event', item.liveEvent);
+      addLine(card, 'Stored event', item.storedEvent);
+      addLine(card, 'Reason', item.reason);
+      addLine(card, 'Subject', item.subject);
+
+      if (item.storedEvent !== item.liveEvent) {
+        const warning = document.createElement('p');
+        warning.className = 'warning';
+        warning.textContent =
+          'Stored and current classifications differ. Manual review required.';
+        card.appendChild(warning);
+      }
+
+      (item.candidates || []).forEach(function(app) {
+        addLine(
+          card,
+          'Existing application candidate',
+          app.company + ' — ' + app.role +
+          ' | ' + app.applicationId +
+          ' | Status: ' + app.status
+        );
+      });
+
+      if (item.gmailLink) {
+        const link = document.createElement('a');
+        link.className = 'email-link';
+        link.textContent = 'Open original email';
+        link.href = item.gmailLink;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        card.appendChild(link);
+      }
+
+      if (
+        item.canLink &&
+        item.proposedAction === 'LINK_EXISTING' &&
+        item.candidates.length === 1
+      ) {
+        const app = item.candidates[0];
+
+        const button = document.createElement('button');
+        button.className = 'confirm-button';
+        button.textContent = 'Review & Confirm Link';
+
+        const feedback = document.createElement('p');
+        feedback.className = 'result-message';
+
+        button.addEventListener('click', function() {
+          if (busy) return;
+
+          const confirmed = window.confirm(
+            'Link this email to an existing application?\n\n' +
+            'Company: ' + item.company + '\n' +
+            'Role: ' + app.role + '\n' +
+            'Application ID: ' + app.applicationId + '\n\n' +
+            'Only Email Links will change.\n' +
+            'Master Tracker and statuses will not change.'
+          );
+
+          if (!confirmed) return;
+
+          busy = true;
+          button.disabled = true;
+          button.textContent = 'Saving...';
+
+          google.script.run
+            .withSuccessHandler(function(message) {
+              busy = false;
+              feedback.textContent = '✓ ' + message;
+              feedback.style.color = '#137333';
+              button.textContent = 'Linked';
+              button.disabled = true;
+              loadQueue();
+            })
+            .withFailureHandler(function(error) {
+              busy = false;
+              feedback.textContent =
+                'Error: ' + getErrorMessage(error);
+              feedback.style.color = '#c5221f';
+              button.textContent = 'Review & Confirm Link';
+              button.disabled = false;
+            })
+            .jtApproveExactEmailLink(
+              item.messageId,
+              app.applicationId
+            );
+        });
+
+        card.appendChild(button);
+        card.appendChild(feedback);
+      } else {
+        const notice = document.createElement('p');
+        notice.className = 'help-text';
+        notice.textContent =
+          'Application updates require separate approval.';
+        card.appendChild(notice);
+      }
+
+      // Mark one email as reviewed after explicit confirmation.
+      // Classification conflicts must be resolved first.
+      if (isVerifiedRejectionCandidate(item)) {
+        const reviewButton = document.createElement('button');
+        reviewButton.className = 'details-button';
+        reviewButton.textContent = 'Mark as Reviewed';
+
+        const reviewFeedback = document.createElement('p');
+        reviewFeedback.className = 'result-message';
+        reviewFeedback.setAttribute('role', 'status');
+
+        reviewButton.addEventListener('click', function() {
+          if (busy) return;
+
+          const confirmed = window.confirm(
+            'Have you reviewed this email and completed any ' +
+            'necessary update to the application?\n\n' +
+            'Company: ' + (item.company || 'Unknown') + '\n' +
+            'Subject: ' + item.subject + '\n\n' +
+            'This only marks the email as REVIEWED.\n' +
+            'It does NOT update the application status or create a link.'
+          );
+
+          if (!confirmed) return;
+
+          busy = true;
+          reviewButton.disabled = true;
+          reviewButton.textContent = 'Saving...';
+
+          google.script.run
+            .withSuccessHandler(function(message) {
+              busy = false;
+              reviewFeedback.textContent = '✓ ' + message;
+              reviewFeedback.style.color = '#137333';
+              loadQueue();
+            })
+            .withFailureHandler(function(error) {
+              busy = false;
+              reviewFeedback.textContent =
+                'Error: ' + getErrorMessage(error);
+              reviewFeedback.style.color = '#c5221f';
+              reviewButton.disabled = true;
+              reviewButton.textContent = 'Refresh before retrying';
+            })
+            .jtMarkOneEmailReviewed(
+              item.messageId,
+              item.storedEvent,
+              item.liveEvent
+            );
+        });
+
+        card.appendChild(reviewButton);
+        card.appendChild(reviewFeedback);
+      }
+
+
+      results.appendChild(card);
+    });
+  }
+
+  function loadQueue() {
+    status.textContent = 'Loading action queue...';
+    results.replaceChildren();
+
+    google.script.run
+      .withSuccessHandler(function(data) {
+        queue = Array.isArray(data) ? data : [];
+        const valid = new Set(queue.filter(isVerifiedRejectionCandidate)
+          .map(function(item) { return item.messageId; }));
+        Array.from(selectedRejections).forEach(function(id) {
+          if (!valid.has(id)) selectedRejections.delete(id);
+        });
+        render();
+        updateBulkButton();
+      })
+      .withFailureHandler(function(error) {
+        status.textContent =
+          'Error loading queue: ' + getErrorMessage(error);
+      })
+      .jtGetActionQueue();
+  }
+
+  bulkButton.addEventListener('click', function() {
+    if (busy || selectedRejections.size === 0) return;
+
+    const items = queue.filter(function(item) {
+      return selectedRejections.has(item.messageId) &&
+        isVerifiedRejectionCandidate(item);
+    });
+
+    // Never proceed with selections that became stale.
+    if (items.length !== selectedRejections.size) {
+      bulkNotice.textContent = 'Selections changed. Refresh and reselect.';
+      selectedRejections.clear();
+      updateBulkButton();
+      loadQueue();
+      return;
+    }
+
+    const summary = items.map(function(item) {
+      return item.company + ' — ' + item.candidates[0].role;
+    }).join('\n');
+
+    const confirmed = window.confirm(
+      'Mark these ' + items.length + ' individually selected rejection ' +
+      'emails as REVIEWED?\n\n' + summary +
+      '\n\nConfirm you opened each email and verified the exact role. ' +
+      'Only Review Inbox column H changes. Master, Email Links and Gmail ' +
+      'remain unchanged.\n\nIf a write fails, previously reviewed ' +
+      'emails remain reviewed; remaining emails will not be changed.'
+    );
+    if (!confirmed) return;
+
+    busy = true;
+    updateBulkButton();
+    refresh.disabled = true;
+    let completed = 0;
+    bulkNotice.textContent = 'Reviewing 0 / ' + items.length + '...';
+
+    // Reuses the tested one-email server function, which rechecks NEW
+    // state and both classifications under its lock before each write.
+    function reviewNext(index) {
+      if (index >= items.length) {
+        busy = false;
+        refresh.disabled = false;
+        selectedRejections.clear();
+        bulkNotice.textContent =
+          'Completed: ' + completed + ' rejection email(s) marked REVIEWED.';
+        loadQueue();
+        return;
+      }
+
+      const item = items[index];
+      google.script.run
+        .withSuccessHandler(function() {
+          completed++;
+          bulkNotice.textContent =
+            'Reviewing ' + completed + ' / ' + items.length + '...';
+          reviewNext(index + 1);
+        })
+        .withFailureHandler(function(error) {
+          busy = false;
+          refresh.disabled = false;
+          selectedRejections.clear();
+          bulkNotice.textContent =
+            'Stopped after ' + completed + ' / ' + items.length +
+            ' emails. Error: ' + getErrorMessage(error) +
+            '. Refresh before retrying; completed items remain reviewed.';
+          loadQueue();
+        })
+        .jtMarkOneEmailReviewed(
+          item.messageId, item.storedEvent, item.liveEvent
+        );
+    }
+
+    reviewNext(0);
+  });
+
+  tab.addEventListener('click', function() {
+    switchTab('actionqueue');
+    loadQueue();
+  });
+
+  filter.addEventListener('change', function() {
+    if (!busy) render();
+  });
+  refresh.addEventListener('click', function() {
+    if (!busy) loadQueue();
+  });
+}
+
+window.addEventListener('load', jtInitActionQueueUI);
+</script>
+<!-- Job Tracker: CLOSED category. Paste ONCE just before </body> in ApprovalPage.html.
+     UI-only: Does not write to Master Tracker, Review Inbox, Email Links, or Gmail.
+     Requires existing global allApplications, categoryLabels, renderSummary, renderApplications. -->
+<script>
+(function jtInstallClosedCategory_() {
+  'use strict';
+
+  if (typeof renderSummary !== 'function' ||
+      typeof renderApplications !== 'function' ||
+      typeof categoryLabels === 'undefined') {
+    console.error('Job Tracker Closed patch: existing Applications UI not found.');
+    return;
+  }
+
+  // Avoid double-installing if the page template changes later.
+  if (window.__jtClosedCategoryInstalled) return;
+  window.__jtClosedCategoryInstalled = true;
+
+  const originalRenderSummary = renderSummary;
+  const closedStatus = /position\s+no\s+longer\s+available|position\s+(?:is\s+)?filled|role\s+(?:is\s+)?filled|job\s+(?:is\s+|has\s+been\s+)?filled/i;
+  const categories = [
+    'active', 'rejected', 'closed', 'unverified',
+    'outreach', 'optedOut', 'notApplication'
+  ];
+
+  categoryLabels.closed = 'Closed';
+
+  // The existing loadApplications() sets allApplications and then calls
+  // renderSummary(). This adapter classifies the UI copy only.
+  window.renderSummary = function jtRenderSummaryWithClosed_(serverSummary) {
+    const apps = Array.isArray(allApplications) ? allApplications : [];
+    apps.forEach(function(app) {
+      if (closedStatus.test(String(app.status || ''))) {
+        app.category = 'closed';
+      }
+    });
+
+    const summary = Object.assign({}, serverSummary || {});
+    categories.forEach(function(name) { summary[name] = 0; });
+    apps.forEach(function(app) {
+      if (Object.prototype.hasOwnProperty.call(summary, app.category)) {
+        summary[app.category] += 1;
+      }
+    });
+    summary.total = apps.length;
+
+    // Keep the original app's summary cards, including Opted Out.
+    originalRenderSummary(summary);
+
+    const filter = document.getElementById('application-filter');
+    if (filter && !filter.querySelector('option[value="closed"]')) {
+      const option = document.createElement('option');
+      option.value = 'closed';
+      option.textContent = 'Closed';
+      const rejected = filter.querySelector('option[value="rejected"]');
+      if (rejected) rejected.insertAdjacentElement('afterend', option);
+      else filter.appendChild(option);
+    }
+
+    const container = document.getElementById('summary');
+    if (!container) return;
+    const existingLabels = Array.from(container.querySelectorAll('.summary-label'));
+    if (existingLabels.some(function(el) {
+      return el.textContent.trim() === 'Closed';
+    })) return;
+
+    const card = document.createElement('div');
+    card.className = 'summary-card clickable-card';
+
+    const label = document.createElement('div');
+    label.className = 'summary-label';
+    label.textContent = 'Closed';
+
+    const number = document.createElement('div');
+    number.className = 'summary-number';
+    number.textContent = String(summary.closed);
+
+    card.appendChild(label);
+    card.appendChild(number);
+    card.addEventListener('click', function() {
+      if (!filter) return;
+      filter.value = 'closed';
+      renderApplications();
+    });
+
+    const rejectedLabel = existingLabels.find(function(el) {
+      return el.textContent.trim() === 'Rejected';
+    });
+    const rejectedCard = rejectedLabel && rejectedLabel.closest('.summary-card');
+    if (rejectedCard && rejectedCard.parentNode === container) {
+      container.insertBefore(card, rejectedCard.nextSibling);
+    } else {
+      container.appendChild(card);
+    }
+  };
+
+  if (!document.getElementById('jt-closed-category-style')) {
+    const style = document.createElement('style');
+    style.id = 'jt-closed-category-style';
+    style.textContent = '.status-closed{background:#e8edf2;color:#455468;}';
+    document.head.appendChild(style);
+  }
+})();
+</script>
+
+<!-- JOB OPPORTUNITIES UI: THREE GROUPS (ACTIVE / NEEDS RECHECK / ARCHIVE) -->
+<!-- Replace the entire OLD Job Opportunities UI block (its <style> and <script>) with this block ONCE before </body>. -->
+<style id="jt-opportunities-style">
+  .jt-opp-heading { margin: 0 0 8px; font-size: 22px; }
+  .jt-opp-subtitle { color: #667085; font-size: 14px; margin: 0 0 16px; }
+  .jt-opp-views { display:flex; align-items:stretch; gap:10px; flex-wrap:wrap; margin: 16px 0; }
+  .jt-opp-view { border:1px solid #d0d5dd; background:#fff; color:#344054;
+    padding:12px 15px; border-radius:10px; cursor:pointer; font:inherit;
+    font-weight:600; text-align:left; flex:1 1 190px; }
+  .jt-opp-view.is-selected { border-color:#1967d2; background:#e8f0fe; color:#174ea6; }
+  .jt-opp-view-count { display:inline-block; margin-left:8px; padding:2px 8px;
+    border-radius:100px; background:#f2f4f7; color:#344054; font-size:12px; }
+  .jt-opp-view.is-selected .jt-opp-view-count { background:#c9dafb; color:#174ea6; }
+  .jt-opp-controls { display:flex; gap:12px; flex-wrap:wrap; margin: 16px 0 18px; }
+  .jt-opp-controls input, .jt-opp-controls select { padding:11px 12px;
+    border:1px solid #d0d5dd; border-radius:8px; font:inherit; background:#fff; min-height:42px; }
+  .jt-opp-controls input { flex:2; min-width:190px; }
+  .jt-opp-controls select { flex:1; min-width:145px; }
+  .jt-opp-controls button, .jt-opp-apply { display:inline-block; border:0; border-radius:8px;
+    padding:11px 15px; background:#1967d2; color:white; text-decoration:none;
+    font-weight:600; font-size:14px; cursor:pointer; }
+  .jt-opp-controls button:hover, .jt-opp-apply:hover { background:#1557b0; }
+  .jt-opp-summary { color:#667085; margin:10px 0 18px; font-size:14px; }
+  .jt-opp-section { margin:28px 0 15px; font-size:19px; }
+  .jt-opp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+  .jt-opp-card { background:white; border:1px solid #e5e7eb; border-radius:12px;
+    padding:18px; box-shadow:0 2px 8px rgba(0,0,0,.04); }
+  .jt-opp-card-top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+  .jt-opp-company { font-size:14px; font-weight:700; color:#475467; }
+  .jt-opp-role { font-weight:700; font-size:17px; margin:8px 0 10px; }
+  .jt-opp-score { border-radius:9px; background:#e8f0fe; color:#174ea6;
+    padding:7px 9px; font-size:13px; font-weight:700; white-space:nowrap; }
+  .jt-opp-meta { font-size:13px; color:#667085; line-height:1.7; overflow-wrap:anywhere; }
+  .jt-opp-text { font-size:13px; line-height:1.5; margin-top:12px;
+    white-space:pre-wrap; overflow-wrap:anywhere; }
+  .jt-opp-status { display:inline-block; font-size:12px; border-radius:7px;
+    margin-top:10px; padding:4px 8px; background:#f2f4f7; color:#344054; }
+  .jt-opp-status-needs { background:#fff4db; color:#92400e; }
+  .jt-opp-status-closed { background:#f2f4f7; color:#475467; }
+  .jt-opp-warning { font-size:13px; padding:10px 12px; margin-top:12px;
+    border-radius:8px; background:#fff8ea; color:#805400; line-height:1.5; }
+  .jt-opp-footer { margin-top:16px; }
+  .jt-opp-archive-actions { display:flex; gap:9px; flex-wrap:wrap; margin-top:10px; }
+  .jt-opp-archive-actions button { padding:9px 11px; font-size:13px; border-radius:8px;
+    cursor:pointer; border:1px solid #d0d5dd; color:#344054; background:#f9fafb; }
+  .jt-opp-archive-actions button:disabled { opacity:.5; cursor:wait; }
+  .jt-opp-inline-message { color:#b42318; margin-top:8px; font-size:12px; }
+  .jt-opp-note { font-size:12px; color:#667085; margin:0 0 16px; line-height:1.5; }
+  .jt-opp-missing { font-size:13px; color:#8b5e24; }
+  .jt-opp-empty { padding:28px; background:white; border:1px dashed #d0d5dd;
+    border-radius:12px; color:#667085; }
+  .jt-opp-check-note { font-size:12px; color:#667085; margin-top:11px;
+    line-height:1.45; overflow-wrap:anywhere; }
+  @media (max-width:500px) { .jt-opp-grid { grid-template-columns:1fr; } }
+</style>
+<script>
+(function jtInstallOpportunitiesUI() {
+  'use strict';
+  if (window.__jtOpportunitiesUIInstalled) return;
+  window.__jtOpportunitiesUIInstalled = true;
+
+  const categoryOrder = [
+    'Coding', 'Data-Oriented', 'Customer-Facing',
+    'Business / Product', 'QA / Automation', 'Other Technical'
+  ];
+  const viewDefinitions = [
+    {id:'active', label:'Active / likely open'},
+    {id:'recheck', label:'Needs recheck'},
+    {id:'archive', label:'Archive'}
+  ];
+  const sheetUrl = 'https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit#gid=YOUR_SHEET_TAB_ID';
+  let opportunities = [];
+  let selectedView = 'active';
+  let loaded = false;
+  let loading = false;
+
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined && text !== null) node.textContent = String(text);
+    return node;
+  }
+
+  function score(job) {
+    return typeof job.score === 'number' && Number.isFinite(job.score) ? job.score : -1;
+  }
+
+  function safeUrl(raw) {
+    try {
+      const url = new URL(String(raw || ''));
+      return (url.protocol === 'https:' || url.protocol === 'http:') ? url.href : '';
+    } catch (_) { return ''; }
+  }
+
+  function checkNote(job) {
+    const source = String(job.source || '');
+    const marker = source.lastIndexOf('[Availability audit ');
+    return marker < 0 ? '' : source.substring(marker).trim();
+  }
+
+  function makeCard(job) {
+    const card = el('article', 'jt-opp-card');
+    const top = el('div', 'jt-opp-card-top');
+    top.appendChild(el('div', 'jt-opp-company', job.company || 'Unknown company'));
+    top.appendChild(el('div', 'jt-opp-score', score(job) < 0 ? 'Not scored' : score(job) + '/100'));
+    card.appendChild(top);
+    card.appendChild(el('div', 'jt-opp-role', job.role || 'Role not specified'));
+    const details = [job.category, job.location].filter(Boolean).join(' · ');
+    if (details) card.appendChild(el('div', 'jt-opp-meta', details));
+
+    const decision = String(job.decision || 'NEW');
+    const statusStyle = job.group === 'recheck' ? ' jt-opp-status-needs' :
+      job.group === 'archive' ? ' jt-opp-status-closed' : '';
+    card.appendChild(el('span', 'jt-opp-status' + statusStyle, decision));
+    if (job.group === 'recheck') {
+      card.appendChild(el('p', 'jt-opp-warning',
+        'This position has not been confirmed open for applications. Check the employer before applying.'));
+    } else if (job.displayNote) {
+      card.appendChild(el('p', 'jt-opp-warning', job.displayNote));
+    }
+
+    if (job.whyItFits) {
+      const why = el('div', 'jt-opp-text');
+      why.appendChild(el('strong', '', 'Why it fits: '));
+      why.appendChild(document.createTextNode(job.whyItFits));
+      card.appendChild(why);
+    }
+    if (job.gaps) {
+      const gaps = el('div', 'jt-opp-text');
+      gaps.appendChild(el('strong', '', 'Gaps: '));
+      gaps.appendChild(document.createTextNode(job.gaps));
+      card.appendChild(gaps);
+    }
+    if (job.lastSeen) {
+      card.appendChild(el('div', 'jt-opp-meta', 'Last seen in sources: ' + job.lastSeen));
+    }
+    const audit = checkNote(job);
+    if (audit) card.appendChild(el('p', 'jt-opp-check-note', audit));
+
+    const footer = el('div', 'jt-opp-footer');
+    const url = safeUrl(job.url);
+    if (url) {
+      const link = el('a', 'jt-opp-apply', job.group === 'active' ? 'Open job posting' : 'View old/unverified posting');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      footer.appendChild(link);
+    } else {
+      footer.appendChild(el('span', 'jt-opp-missing', 'No valid job posting link saved'));
+    }
+    card.appendChild(footer);
+
+    // Backend only supports SKIP and APPLIED — VERIFY from active decisions.
+    // Do not put invalid archive buttons on NEEDS RECHECK / CLOSED rows.
+    if (job.group === 'active' && ['NEW','CONSIDER','APPLY'].includes(decision)) {
+      const actions = el('div', 'jt-opp-archive-actions');
+      const inlineMessage = el('div', 'jt-opp-inline-message');
+      const notRelevant = el('button', '', 'Not relevant · Hide');
+      const applied = el('button', '', 'I applied · Hide');
+      notRelevant.type = 'button';
+      applied.type = 'button';
+      function archive(newDecision) {
+        const message = newDecision === 'SKIP'
+          ? 'Move this job to Archive as not relevant? Nothing will be deleted.'
+          : 'Confirm that you submitted this application. This archives the opportunity only; it will NOT create an application in Master Tracker.';
+        if (!window.confirm(message)) return;
+        inlineMessage.textContent = 'Saving...';
+        notRelevant.disabled = applied.disabled = true;
+        google.script.run
+          .withSuccessHandler(function() {
+            load(true);  // Reload from the backend so the archive view also updates.
+          })
+          .withFailureHandler(function(error) {
+            notRelevant.disabled = applied.disabled = false;
+            inlineMessage.textContent = 'Could not save: ' +
+              (error && error.message ? error.message : String(error)) +
+              '. Refresh and retry.';
+          })
+          .jtSetOpportunityDecision(job.rowNumber, job.company, job.role,
+                                    job.jobId || '', job.url || '', newDecision);
+      }
+      notRelevant.addEventListener('click', function() { archive('SKIP'); });
+      applied.addEventListener('click', function() { archive('APPLIED — VERIFY'); });
+      actions.appendChild(notRelevant);
+      actions.appendChild(applied);
+      card.appendChild(actions);
+      card.appendChild(inlineMessage);
+    }
+    return card;
+  }
+
+  function addSection(parent, heading, jobs) {
+    if (!jobs.length) return;
+    parent.appendChild(el('h3', 'jt-opp-section', heading));
+    const grid = el('div', 'jt-opp-grid');
+    jobs.forEach(function(job) { grid.appendChild(makeCard(job)); });
+    parent.appendChild(grid);
+  }
+
+  function viewCount(id) {
+    return opportunities.filter(function(job) { return job.group === id; }).length;
+  }
+
+  function render() {
+    const search = document.getElementById('jt-opp-search').value.trim().toLowerCase();
+    const category = document.getElementById('jt-opp-category').value;
+    const decision = document.getElementById('jt-opp-decision').value;
+    const views = document.getElementById('jt-opp-views');
+    const results = document.getElementById('jt-opp-results');
+    views.replaceChildren();
+    results.replaceChildren();
+
+    viewDefinitions.forEach(function(def) {
+      const btn = el('button', 'jt-opp-view' + (selectedView === def.id ? ' is-selected' : ''), def.label);
+      btn.type = 'button';
+      btn.appendChild(el('span', 'jt-opp-view-count', viewCount(def.id)));
+      btn.setAttribute('aria-pressed', selectedView === def.id ? 'true' : 'false');
+      btn.addEventListener('click', function() {
+        selectedView = def.id;
+        document.getElementById('jt-opp-decision').value = 'all';
+        render();
+      });
+      views.appendChild(btn);
+    });
+
+    const filtered = opportunities.filter(function(job) {
+      const searchable = [job.company, job.role, job.location, job.whyItFits, job.gaps].join(' ').toLowerCase();
+      return job.group === selectedView && searchable.includes(search) &&
+        (category === 'all' || (job.category || 'Other Technical') === category) &&
+        (decision === 'all' || (job.decision || 'NEW') === decision);
+    }).sort(function(a,b) { return score(b) - score(a); });
+
+    document.getElementById('jt-opp-summary').textContent =
+      filtered.length + ' job(s) shown · ' + opportunities.length + ' saved · ' +
+      viewCount('active') + ' active / ' + viewCount('recheck') + ' needs recheck / ' +
+      viewCount('archive') + ' archived';
+    if (!filtered.length) {
+      results.appendChild(el('div', 'jt-opp-empty',
+        loaded && !opportunities.length
+          ? 'No jobs saved yet.'
+          : 'No jobs match the current view and filters.'));
+      return;
+    }
+
+    if (selectedView === 'active') addSection(results, 'Top 5 by Fit Score', filtered.slice(0, 5));
+    results.appendChild(el('h2', 'jt-opp-section', 'All jobs by category'));
+    const categories = [...new Set(filtered.map(function(job) { return job.category || 'Other Technical'; }))];
+    categories.sort(function(a, b) {
+      const ai = categoryOrder.indexOf(a);
+      const bi = categoryOrder.indexOf(b);
+      return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi) || a.localeCompare(b);
+    });
+    categories.forEach(function(name) {
+      addSection(results, name, filtered.filter(function(job) {
+        return (job.category || 'Other Technical') === name;
+      }));
+    });
+  }
+
+  function load(force) {
+    if (loading || (loaded && !force)) return;
+    loading = true;
+    document.getElementById('jt-opp-summary').textContent = 'Loading saved job opportunities...';
+    google.script.run
+      .withSuccessHandler(function(rows) {
+        loading = false;
+        loaded = true;
+        opportunities = Array.isArray(rows) ? rows : [];
+        render();
+      })
+      .withFailureHandler(function(error) {
+        loading = false;
+        document.getElementById('jt-opp-summary').textContent =
+          'Error loading opportunities: ' + (error && error.message ? error.message : String(error));
+      })
+      .jtGetOpportunityDashboard();
+  }
+
+  function init() {
+    const nav = document.querySelector('.tabs');
+    const container = document.querySelector('.container');
+    if (!nav || !container || typeof switchTab !== 'function') return;
+    const tab = el('button', 'tab', 'Job Opportunities');
+    tab.type = 'button';
+    tab.dataset.tab = 'opportunities';
+    tab.addEventListener('click', function() {
+      switchTab('opportunities');
+      load(true);
+    });
+    nav.appendChild(tab);
+
+    const panel = el('section', 'panel');
+    panel.id = 'opportunities-panel';
+    panel.appendChild(el('h2', 'jt-opp-heading', 'Job Opportunities'));
+    panel.appendChild(el('p', 'jt-opp-subtitle',
+      'All saved jobs · availability checks and archive kept separate · no rows deleted'));
+    const views = el('div', 'jt-opp-views');
+    views.id = 'jt-opp-views';
+    panel.appendChild(views);
+    const controls = el('div', 'jt-opp-controls');
+    const search = el('input');
+    search.type = 'search';
+    search.id = 'jt-opp-search';
+    search.placeholder = 'Search company, role or location';
+    search.addEventListener('input', render);
+    controls.appendChild(search);
+    const category = el('select');
+    category.id = 'jt-opp-category';
+    ['all'].concat(categoryOrder).forEach(function(value) {
+      const option = el('option', '', value === 'all' ? 'All categories' : value);
+      option.value = value;
+      category.appendChild(option);
+    });
+    category.addEventListener('change', render);
+    controls.appendChild(category);
+    const decision = el('select');
+    decision.id = 'jt-opp-decision';
+    ['all','NEW','CONSIDER','APPLY','NEEDS RECHECK','CLOSED','SKIP','APPLIED — VERIFY','APPLIED'].forEach(function(value) {
+      const option = el('option', '', value === 'all' ? 'All decisions' : value);
+      option.value = value;
+      decision.appendChild(option);
+    });
+    decision.addEventListener('change', render);
+    controls.appendChild(decision);
+    const refresh = el('button', '', 'Refresh');
+    refresh.type = 'button';
+    refresh.addEventListener('click', function() { load(true); });
+    controls.appendChild(refresh);
+    panel.appendChild(controls);
+    panel.appendChild(el('p', 'jt-opp-note',
+      'Needs recheck ≠ closed. To restore a saved job, change its Decision to NEW in the Google Sheet after verifying the exact application link.'));
+    const sheetLink = el('a', 'jt-opp-note', 'Open Job Opportunities sheet');
+    sheetLink.href = sheetUrl;
+    sheetLink.target = '_blank';
+    sheetLink.rel = 'noopener noreferrer';
+    panel.appendChild(sheetLink);
+    const summary = el('p', 'jt-opp-summary', 'Open this tab to load jobs.');
+    summary.id = 'jt-opp-summary';
+    panel.appendChild(summary);
+    const results = el('div');
+    results.id = 'jt-opp-results';
+    panel.appendChild(results);
+    container.appendChild(panel);
+  }
+
+  window.addEventListener('load', init);
+})();
+</script>
+
+</body>
+
+</html>
