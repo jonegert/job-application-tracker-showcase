@@ -1,5 +1,7 @@
 # Job Application Tracker
 
+ **[Try the Live Demo](https://jonegert.github.io/job-application-tracker-showcase/demo/)**
+
 **Approval-first automation for tracking recruiting emails and job applications.**
 
 A personal engineering project built with **Google Apps Script, Gmail, Google Sheets, an HTML/CSS/JavaScript Approval Center, and Pushover**. It turns recruiting emails into reviewable events without silently changing application records.
