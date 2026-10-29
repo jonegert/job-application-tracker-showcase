@@ -1,36 +1,47 @@
 # Engineering roadmap
 
-Updated: 2026-10-28. This is the portfolio-source roadmap; changes in this repo do not deploy automatically to the live Apps Script project.
+**Updated 29 October 2026.** This document separates evidence from the **private live system** and what is included in this deliberately limited **public showcase**. Changes to the public repository do not deploy to the live Apps Script project.
 
-## Completed
+## Verified in the private deployment
 
-- [x] Create a private GitHub repository and initial redacted source snapshot.
-- [x] Include all 11 Apps Script source modules, including `Applications.gs`.
-- [x] Set up `.gitignore`, credential-free config example, and source documentation.
-- [x] Create offline regression tests and GitHub Actions workflow.
-- [x] Observe a successful CI run on `main` after the initial test-suite commit.
-- [x] Add an architecture explanation and isolated synthetic UI preview.
+- [x] Gmail recruitment-event collection, review staging and owner-controlled application changes.
+- [x] Private Approval Center Web App; user confirmed version 30.
+- [x] Master Tracker, separate job-opportunity records and review history.
+- [x] Genuine Pushover alert for three newly discovered recruiting messages received on phone.
+- [x] Full 45-day paged Gmail scan with no 300-thread truncation.
+- [x] First successful full-backfill checkpoint and an immediate subsequent 14-day fast scan.
+- [x] Observed 115.1 seconds FULL / 36.9 seconds FAST (~68% reduction in measured execution time).
+- [x] Read-only requisition-deduplication smoke test against known application data.
+- [x] Owner-created Apps Script safety copy (reported; restore not verified).
 
-## Next: highest priority
+## Available publicly now
 
-- [ ] Compare **every current live Apps Script module** against the Git snapshot before attempting any automated sync; preserve the live deployment.
-- [x] Exclude one-off personal repair scripts and genericize known company aliases in a release candidate.
-- [ ] Perform final human review of this **separate history-clean source export** before making it public. Keep the original repository private.
-- [ ] Validate the hourly email scan on multiple scheduled runs and investigate recurring failures or lock contention.
-- [ ] Observe a genuine new recruiting email trigger one Pushover alert with the correct private `/exec` link (no synthetic Master Tracker changes).
+- [x] Isolated repository with clean initial history and credential-free generalized source.
+- [x] Synthetic browser-only interactive five-tab demo on GitHub Pages.
+- [x] Offline JavaScript tests and heuristic privacy scanner in GitHub Actions.
+- [x] Architecture, case study, security notes and recruiter walkthrough.
 
-## Reliability and product hardening
+## Follow-up reliability verification
 
-- [ ] Profile Gmail scan time and optimize incremental processing without weakening deduplication.
-- [ ] Expand tests for controlled writes, stale-state conflicts, linked email IDs, and job-requisition uniqueness.
-- [x] Isolate one-off mutating functions from the portfolio reference; live source unchanged.
-- [ ] Review Apps Script permissions and deployment identity; then design safe `clasp`/CI workflow if desired.
-- [ ] Reconcile daily job-discovery results with opportunities while preserving user review of new records.
+- [ ] Witness the **next scheduled FULL backfill** after approximately 23 hours; so far only the first FULL+FAST pair is verified.
+- [ ] Verify scheduled daily Job Hunter staging into the private queue (not just user-initiated staging).
+- [ ] Confirm one Pushover notification for a genuinely new Hunter proposal, and no duplicate notification on retries.
+- [ ] Verify complete private source export/backup, deployed version parity, permissions and reproducible restore.
+- [ ] Extend regression coverage for conflict races and approval-state transitions.
 
-## Portfolio polish
+## Final portfolio polish
 
-- [ ] Review the new README and synthetic demo for accuracy against the latest deployed UI.
-- [ ] Capture synthetic-only screenshots and add them to the README.
-- [x] Prepare a separately genericized release export for a new Git history.
-- [ ] Decide on a license before publishing.
-- [ ] Consider adding an optional demo video after privacy review.
+- [ ] Manually audit current public files and Git history for private data beyond heuristic CI scans.
+- [ ] Verify demo in incognito and at mobile width; review search, filters and detail dialogs.
+- [ ] Add one or two **synthetic** screenshots if they improve presentation.
+- [ ] Decide whether to add an explicit open-source license; none is granted by default without one.
+
+## Future AI drafting feature — NOT shipped
+
+- [ ] Private versioned candidate fact bank and approved CV / cover-letter style references.
+- [ ] Capture each job's source description, URL and verified requirements; fail closed on missing descriptions.
+- [ ] Generate factual CV and letter **drafts** per job; flag unsupported claims; require explicit owner review.
+- [ ] Save editable Docs/PDF in private storage; add a versioned, approval-first document UI.
+- [ ] Add a synthetic-only portfolio demo of the feature after it is implemented and tested.
+
+**Out of scope:** automatically submitting applications or changing application outcomes without explicit user approval.
