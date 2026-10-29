@@ -1,60 +1,73 @@
-# Architecture and safety model
+# Architecture and trust boundaries
 
-This document describes a **genericized reference architecture**, derived from a private project. The public source is not an exact deployable export.
+The **private operational tracker** runs on Gmail, Google Apps Script, Google Sheets and Pushover. The **public source tree** is a sanitized reference and deliberately not an exact deployable copy of the live project. The **public demo** contains fictional, local-only data.
 
-## Components
+## Components and ownership
 
 | Component | Responsibility | Data boundary |
 | --- | --- | --- |
-| Gmail | Source of recruitment updates | Never modified by the scanning workflow |
-| Apps Script scanner (`Code.gs`) | Collect and categorize relevant messages | Stages proposed events; does not write the Master Tracker |
-| Matching engine (`JobTrackerEngine.gs`) | Determine candidates, IDs, confidence, and ambiguity | Ambiguous matches require review |
-| Review Inbox (Google Sheets) | Queue of detected emails and review states | An inbox item is not a verified application |
-| Approval Center (`ApprovalPage.html`) | Present records and user-controlled actions | Changes require specific approval actions |
-| Application actions (`ApplicationApproval.gs`, other action modules) | Apply approved operations and maintain links | Must validate current state and IDs before writes |
-| Master Tracker and Email Links (Google Sheets) | Persist application records and email links | Canonical application state |
-| Notification module (`JobTrackerNotifications.gs`) | Notify when new Review Inbox IDs appear | Uses script lock and sent-ID record; no Master Tracker writes |
-| Opportunities (`JobOpportunities.gs`) | Display job openings and availability evidence | Separate opportunity status from confirmed applications |
+| Gmail | Source of incoming recruitment messages | Scan workflow reads, not edits, the inbox |
+| Apps Script scheduler/scanner | Collect and classify potential recruiting events | Writes review candidates; no automatic Master Tracker edits |
+| Matching engine | Compare company, title, requisition and message IDs | Ambiguity requires human review |
+| Review Inbox | Staging of incoming signals | A detected event is not a verified application outcome |
+| Private Approval Center | Explicit owner-controlled decisions | Only validated actions can change the canonical records |
+| Master Tracker | Applications and their statuses | No direct email-scanner update |
+| Email Links | Provenance and message-to-application links | Allows reconciliation and prevents duplicate link creation |
+| Job Opportunities | Leads, evidence and recheck states | A lead is distinct from a submitted application |
+| Pushover notifications | New review-item alerts with sent-ID ledger | Alerting does not authorize an application change |
+| Public browser demo | Show UI concepts safely | Synthetic records only; no credentials or network API calls |
 
-## Event flow
+## Event lifecycle
 
-```mermaid
+~~~mermaid
 sequenceDiagram
+    autonumber
     participant G as Gmail
-    participant S as Scheduled Apps Script
+    participant S as Apps Script scanner
     participant Q as Review Inbox
     participant P as Pushover
-    participant U as User / Approval Center
+    participant U as Owner / private UI
     participant M as Master Tracker
-    G->>S: Recruitment message arrives
-    S->>S: Classify event and match possible application
-    S->>Q: Stage item for review
-    S->>P: One alert for newly pending message IDs
-    P-->>U: Notification with private Approval Center link
-    U->>Q: Review the proposed change
-    alt User explicitly approves an action
-        U->>M: Validated, controlled write (where applicable)
-    else User declines or defers
-        Note over M: No automatic application status update
+    G->>S: Recruiting message
+    S->>S: Classify and match; detect duplicates
+    S->>Q: Stage candidate
+    S->>P: Notify only newly pending IDs
+    P-->>U: Private review alert
+    U->>Q: Inspect source evidence
+    alt Explicit owner decision and fresh validation
+      U->>M: Controlled application change
+    else Ignore, unclear, or defer
+      Note over M: Master Tracker untouched
     end
-```
+~~~
 
-## Key invariants
+## Reliability and safety invariants
 
-1. **Email observation is not consent to modify an application.** A notification is informational.
-2. **Scanning must not create applications or rewrite statuses in Master Tracker.**
-3. **Distinct requisition IDs are not automatically collapsed**, even if company and title match.
-4. **Role closure is not necessarily personal rejection.** Ambiguous wording stays reviewable.
-5. **Push deduplication is independent of application status changes.** The sent-ID ledger is updated only after successful Pushover delivery acknowledgement.
-6. **Demonstration data is isolated.** The standalone demo has no credentials, APIs, or production Sheets identifiers.
+1. **Observation is not authorization.** A Gmail message does not independently change application status.
+2. **Requisition identity is meaningful.** Distinct official job IDs may be separate roles even at the same employer.
+3. **Uncertain evidence stays uncertain.** A filled position is not necessarily a personal rejection; generic digests need review.
+4. **Idempotency is a first-class concern.** Reviewed message IDs, known job IDs and sent-notification IDs reduce duplicates.
+5. **Retries and concurrency need guards.** Script locks protect relevant actions; notification IDs are recorded only on confirmed Pushover success.
+6. **No production data in the public edition.** Personal CVs, recruiter emails, job histories, keys and live deployment URLs must stay private.
+7. **Mock tests are not production verification.** Offline CI cannot establish OAuth permissions or validate a live trigger.
 
-## Operational limitations
+## Live-only incremental Gmail scan design
 
-- Gmail scans can be expensive when many historical threads are revisited. The scanning range and concurrency controls need ongoing profiling.
-- A successful mocked CI run does not verify OAuth permissions, trigger schedules, Apps Script quotas, or Pushover delivery in production.
-- Personal one-off migration helpers have been excluded. Do not sync this genericized source over the original Apps Script project.
-- The user's private web-app deployment and Sheet URLs are intentionally excluded from public-facing docs.
+The **later private implementation** uses the same paged Gmail helper in two modes:
 
-## Engineering follow-up
+- **FULL** scans 45 days when a last-successful-full-run checkpoint is missing or around 23 hours old.
+- **FAST** scans 14 days on intervening hourly cycles.
+- A full-run checkpoint is recorded only after review rows are successfully written and the dashboard refreshed.
+- A failed full scan leaves the next run eligible to retry FULL.
 
-See [ROADMAP.md](ROADMAP.md). Highest-priority live proof: a real new recruiting email -> one new review item -> exactly one push -> correct `/exec` link -> user approval (if desired).
+On 29 October 2026 the owner observed FULL scanning 578 threads in 115.1 seconds, immediately followed by FAST scanning 208 threads in 36.9 seconds. This measured improvement trades immediate checking of older messages for a daily backfill. The next recurring FULL run was not yet observed. See the [case study](CASE_STUDY.md).
+
+**The public source snapshot does not include all these later live-only modules and should not be used to overwrite production.**
+
+## Deployment isolation
+
+- **Private deployment:** real Gmail/Sheets, owner-restricted web app, production Script Properties and time-based triggers.
+- **Public source:** generic reference modules and credential-free mocked unit tests.
+- **Public GitHub Pages demo:** read-only, synthetic browser UI, not connected to the operational system.
+
+See the [Security guide](SECURITY.md) and [Roadmap](ROADMAP.md).

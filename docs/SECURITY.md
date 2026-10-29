@@ -1,15 +1,33 @@
-# Privacy and security — public source edition
+# Security and privacy boundaries
 
-This is an intentionally genericized **reference implementation**, not a deployed copy.
+This is a **sanitized public reference repository**. It is not the user's private deployed system. The public browser demo is read-only, uses fabricated records and does not access real Google or Pushover services.
 
-- A separate, fresh repository is required for a public release: **do not change visibility of the original private repository**, because old commits retain historical details.
-- Personal one-off application corrections and hard-coded recruiting histories were excluded from `JobTrackerSafety.gs`.
-- Company-name and sender-domain dictionaries are illustrative, not a real user's list of employers.
-- The browser demo contains invented data and does not contact external services.
-- Tokens, OAuth credentials, real Sheets/Gmail records, private Script Properties, message IDs, `.clasp.json`, and deployment URLs must never be committed.
-- Configure real secrets in Apps Script Script Properties only; restrict Web App authorization and spreadsheet permissions appropriately.
-- Treat PRs and GitHub Actions logs as potentially public. CI uses mocks and no external credentials.
-- The limited scanner is a guardrail, **not a guarantee of privacy**; manually review before publishing.
-- Never deploy this genericized source over the operational private Apps Script project.
+## Explicitly excluded from the public edition
 
-If a secret was accidentally published, revoke/rotate it and rewrite/replace exposed history. Deleting a string from a later commit does not erase it from earlier commits.
+- Recruiter emails, application histories, real company/application records and private candidate documents.
+- Private Sheets workbook IDs, Apps Script project/deployment URLs, user account addresses and phone numbers.
+- OAuth credentials, token values, Pushover user keys, environment secrets and Script Properties.
+- Private repair/migration functions and historical one-off corrections.
+- Production deployment metadata and locally authenticated clasp files.
+
+The original repository holding private source remains **private**. This showcase began as a separate clean-history publication; deleting content in a later commit does not erase earlier historical exposures.
+
+## Runtime safety principles
+
+- Email classification creates review candidates, not authorized application status changes.
+- Consequential application and opportunity updates require explicit owner actions.
+- Notification deduplication reduces repeated alerts but cannot guarantee exactly-once delivery under every networking failure.
+- No autonomous applications are submitted.
+- A future AI document generator is **planned, not implemented**. Before processing personal CV sources or sending data to an AI provider, explicit consent, safe credential handling and human review will be required.
+
+## Verification performed and its limitations
+
+On 29 October 2026, a targeted scan of the current public source and documentation did not find the known live spreadsheet/project/deployment identifiers, candidate contact details, private API keys or credential-like tokens. The current public history began with one sanitized release commit and a README follow-up.
+
+The repository's GitHub Actions workflow runs Node mock tests and the conservative **tools/privacy_audit.py** static checker. **Passing tests or keyword scans is not a comprehensive security audit**; review commit history, code, documentation, CI logs, GitHub Pages assets, repository settings and new contributions manually.
+
+If an actual credential is exposed, rotate or revoke it and address any Git history/published artifacts, not only the latest file.
+
+## Never connect this showcase to production
+
+Do **not** paste personal CVs, unredacted Gmail/Sheets exports or the private Approval Center URL into issues, commits, screenshots or the demo. Do **not** deploy the reference **src/** directory over the active private Apps Script system: it intentionally omits real configuration and later live modules.

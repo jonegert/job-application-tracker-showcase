@@ -1,40 +1,30 @@
-# Publish preparation (read before upload)
+# Public showcase release notes
 
-This folder is a **genericized portfolio export**. It is intentionally **not**
-identical to the live Apps Script project.
+**This repository is already a separate, public, clean-history demonstration** of a private Job Application Tracker project. It is intentionally not identical to the owner's live Apps Script deployment.
 
-## Why create a separate GitHub repository?
+## Included in this public edition
 
-Your original private GitHub repository includes older commits that mentioned
-individual application histories. A new commit deleting text cannot erase that
-history. **Keep the original repository private forever**, or arrange a separate
-history rewrite under a deliberate privacy review. For easiest safety, publish
-this export from a **brand-new repository with a single clean first commit**.
+- Sanitized Google Apps Script reference modules and HTML/CSS/JavaScript interface code.
+- A self-contained synthetic-data interactive browser demo hosted on GitHub Pages.
+- Node.js offline unit tests, GitHub Actions CI and a heuristic privacy scanner.
+- Architecture documentation, recruiter walkthrough and an evidence-based engineering case study.
 
-## Safe workflow
+## Deliberately excluded
 
-1. Review every source and documentation file locally.
-2. Run `npm test` (Node 20+) and `python3 tools/privacy_audit.py`.
-3. Create a new **Private** GitHub repository, e.g. `job-application-tracker-portfolio`.
-4. Extract this archive into a **new folder**, not inside the old Git working tree.
-5. In the new folder, run `git init -b main`, `git add .`,
-   `git diff --cached --check`, `git commit -m "Public-source portfolio baseline"`,
-   `git remote add origin <YOUR_NEW_REPOSITORY_HTTPS_URL>`, `git push -u origin main`.
-6. Review the new repository's files and history and CI results.
-7. Only then choose whether to change its visibility to Public.
+- Real recruiting messages, application data, personal CV/cover-letter documents, contact details and credentials.
+- Private configuration and production Apps Script deployment/project/Sheet links.
+- Historical one-off personal corrections, private source Git history and the latest live-only optimization/Job Hunter modules.
+- AI-tailored CV / cover-letter generation, which is planned and not yet available.
 
-## What changed vs the private project?
+## Release verification checklist
 
-- Excluded ~5,000 lines of old candidate-specific repair/migration logic from
-  `src/JobTrackerSafety.gs`; preserved common read-only classification and
-  title-extraction helpers. Do not deploy this file over the private live version.
-- Replaced employer dictionaries, recruiter-domain rules and company aliases
-  with examples. The reference source will not recognize an arbitrary company's
-  recruiting messages without instance-specific configuration.
-- Removed a synthetic-source test that depended on a private Gmail message.
-- Removed the historical row/date exception in opportunity proof checks.
-- Retained generic cross-module APIs, source folder, offline mock tests, workflow,
-  and synthetic browser demo.
+1. Run **npm test** and **python3 tools/privacy_audit.py** on every public source update.
+2. Manually inspect all public code, current Git history, demo assets and repository settings for private information.
+3. Open the [GitHub Pages demo](https://jonegert.github.io/job-application-tracker-showcase/demo/) from an unauthenticated browser; test navigation, search, filters and details on desktop and mobile.
+4. Check the [case study](docs/CASE_STUDY.md) clearly separates measured private observations from what public reference source implements.
+5. Verify GitHub Actions succeeds on the published commit.
+6. Keep the original private production/source repository private.
 
-Limitations: Only an offline/static review can be performed here. No real Gmail,
-Sheets, Apps Script deployment, OAuth permission, or Pushover behavior is tested.
+## Caution
+
+The showcase is **not turnkey deployable**. Configuration, private modules and production secrets are intentionally absent; never overwrite the operational Apps Script project with this genericized example. Tests and static scans are helpful but cannot guarantee zero security risks.

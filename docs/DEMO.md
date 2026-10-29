@@ -1,29 +1,31 @@
-# Synthetic demo walkthrough
+# Public demo: recruiter walkthrough
 
-## Purpose
+**[Open the interactive, synthetic-data demo](https://jonegert.github.io/job-application-tracker-showcase/demo/)**
 
-This repo contains a **static, read-only preview** of a fictional job-application tracker. It is designed to help reviewers understand the interface and approval-first workflow without disclosing job-search history, Gmail messages, phone notification keys, or production deployment URLs.
+## A 60–90 second walkthrough
 
-## Run
+1. **Applications:** search for a fictional company and filter applications by status.
+2. **Application Detection:** inspect a possible new email event and why a scanner should not directly edit an application.
+3. **Approvals:** show where a human decision would sit in the workflow. The public demo deliberately cannot commit changes.
+4. **Action Queue:** inspect fictional pending follow-ups.
+5. **Job Opportunities:** compare open, needs-recheck and archived lead states; a lead is not an application.
 
-Open `demo/index.html` directly in a modern browser. No installation, sign-in, access token, localhost server, or internet connection is required.
+## What this demo is and is not
 
-## Suggested 90-second walkthrough
+- **Is:** self-contained HTML/CSS/JavaScript hosted on GitHub Pages, with browser-side filtering, navigation and details.
+- **Is:** a safe illustration of the user interface and approval-first architecture using entirely fictional records.
+- **Is not:** the private Approval Center deployment, a production-backed dashboard, an OAuth-connected application or an integration test.
+- **Does not:** access Gmail, Google Sheets, Apps Script, Pushover or any LLM API; no live data can be changed.
 
-1. **Applications** — point out summary cards and filter by `Active` or `Rejected`. Use search to find a synthetic company.
-2. **Application Detection** — show how a newly detected email is a *review candidate*, not a confirmed application. Open `Details` on one entry.
-3. **Approvals** — explain that the live system makes real writes only when explicitly approved. The demo cannot approve anything.
-4. **Action Queue** — show a synthetic pending follow-up without changing any record.
-5. **Job Opportunities** — distinguish `Open`, `Recheck`, and `Archived` as opportunity states, not application outcomes.
+## Final acceptance checklist
 
-## Scope and security
+- [ ] Open the GitHub Pages link in an incognito browser (no login).
+- [ ] Check all five navigation tabs on desktop.
+- [ ] Check search, status filters and record-detail dialogs.
+- [ ] Check a mobile-width viewport and keyboard navigation.
+- [ ] Confirm no private emails, candidate names, IDs or operational links appear.
+- [ ] Confirm GitHub Actions CI passes for the public documentation commit.
 
-- All companies, roles, dates, statuses, and counts in this preview are **invented**.
-- All data is embedded locally in the demo file. It is not synchronized with the production tracker.
-- Search, filtering, tab switching, and details work locally. All writing/approval features are intentionally disabled or omitted.
-- The HTML preview is an explanatory mock, **not the deployed Approval Center** and not an integration test.
-- Do not replace these records with real application data or real screenshots before repository publication.
+## Optional screenshots
 
-## Screenshots for a public portfolio (later)
-
-If repository visibility is changed after a security review, take screenshots of **this synthetic demo only**, not of the live system. Recommended captures: dashboard overview, review-candidate details, and opportunity evidence categories.
+If capturing images for the portfolio, use the **fictional public demo only**. Good views: dashboard overview, detection detail and opportunity-status filtering. Never publish screenshots of real job applications, private Gmail or CV documents.
