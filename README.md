@@ -1,100 +1,109 @@
 # Job Application Tracker
 
- **[Try the Live Demo](https://jonegert.github.io/job-application-tracker-showcase/demo/)**
+**Approval-first recruiting automation built with Google Apps Script, Gmail, Google Sheets, JavaScript and Pushover.**
 
-**Approval-first automation for tracking recruiting emails and job applications.**
+**[Live interactive demo](https://jonegert.github.io/job-application-tracker-showcase/demo/)** · [Architecture](docs/ARCHITECTURE.md) · [Engineering case study](docs/CASE_STUDY.md) · [Security](docs/SECURITY.md) · [Roadmap](docs/ROADMAP.md)
 
-A personal engineering project built with **Google Apps Script, Gmail, Google Sheets, an HTML/CSS/JavaScript Approval Center, and Pushover**. It turns recruiting emails into reviewable events without silently changing application records.
+> **Important distinction:** The public demo uses invented data and is read-only. The operational personal tracker is private. This repository is a **privacy-sanitized reference source**, not a current or directly deployable copy of the private implementation. Observed live behavior and code available in this public snapshot are described separately below.
 
-**CI:** Automated syntax and mocked regression tests via GitHub Actions.
+## Problem and engineering approach
 
-> **Privacy and deployment:** This is a **portfolio-oriented reference source** derived from a private system. Personal one-off repair scripts, historical applicant records, and account configuration are deliberately excluded. It is **not a turnkey production deployment**. Never overwrite the original private Apps Script project with this example.
+Application confirmations, interview requests, rejections, newsletters and job alerts arrive through different channels. Simply synchronizing every parsed email with a job-application database creates false positives and duplicate status changes.
 
-## Why this project?
+**The principle: automate detection; require explicit user approval for consequential changes.**
 
-Recruiting updates are spread across application portals, messages, and inboxes. This project organizes them into a single review workflow while prioritizing two engineering requirements: **no accidental changes to the source of truth** and **no duplicated notifications**.
+The private system scans incoming recruiting messages, extracts event candidates, matches companies and requisition IDs, stages proposed updates, and notifies the owner. The review UI separates evidence collection from mutation of the canonical Master Tracker.
 
-## Features
+## Explore the demo in one minute
 
-| Capability | Implementation |
+1. Open the **[interactive demo](https://jonegert.github.io/job-application-tracker-showcase/demo/)**.
+2. In **Applications**, search and filter the fictional application records.
+3. In **Application Detection**, inspect possible incoming recruiting events.
+4. In **Approvals** and **Action Queue**, observe the explicit approval boundary.
+5. In **Job Opportunities**, compare open, recheck and archived job leads.
+
+The public preview is self-contained HTML/CSS/JavaScript. It uses **no credentials, backend, Gmail calls, spreadsheet connection or Pushover API**. Its actions are illustrative, not production writes.
+
+## Engineering capabilities
+
+| Capability | Design and verification |
 | --- | --- |
-| Email monitoring | Scheduled Gmail scan, event classification, and `Review Inbox` staging |
-| Application matching | Company, title, application/job IDs, duplicate checks, and manual-review fallbacks |
-| Approval Center | Web interface for applications, approvals, detection, action queue, and opportunities |
-| Controlled writes | Master Tracker creation/linking requires explicit approval; scanning is read-only against the Master Tracker |
-| Push notifications | Pushover alerts for new review items, with a sent-ID ledger and a script lock |
-| Opportunities | Separate open/recheck/archive views and evidence checks for application availability |
-| Quality checks | Offline JavaScript and behavior tests run in GitHub Actions on pushes and pull requests |
+| Email ingestion | Scheduled Apps Script Gmail scanner, classification and separate Review Inbox staging |
+| Matching and duplicate protection | Message IDs, company/title matching, official requisition distinctions and manual escalation |
+| Human-in-the-loop workflow | Private owner-controlled Approval Center validates individual changes before committing |
+| Persistence and dashboards | Separate canonical application tracker, email links, review candidates and job leads in Sheets |
+| Notifications | Pushover alerts with a sent-ID ledger and locks; real Gmail-review notification received on phone |
+| Reliability | Public mock tests and CI; measured live full/fast scanning reported separately |
+| Public demonstration | Five-tab interactive synthetic-data browser preview; independent of the private system |
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    A[Gmail recruiting messages] --> B[Apps Script scanner]
-    B --> C[Event classification and matching]
-    C --> D[(Google Sheets: Review Inbox)]
-    D --> E[Approval Center web app]
-    D --> F[Pushover alert for new items]
-    F --> E
-    E -->|Explicit user approval| G[Controlled write actions]
-    G --> H[(Google Sheets: Master Tracker and Email Links)]
-    H --> I[Read-only application dashboard]
-    I --> E
-    J[Job opportunity checks] --> K[(Job Opportunities sheet)]
-    K --> E
-```
+~~~mermaid
+flowchart LR
+  A[Gmail recruiting messages] --> B[Scheduled scanner]
+  B --> C[Classification and matching]
+  C --> D[(Review Inbox in Google Sheets)]
+  D --> E[Private Approval Center]
+  D --> F[Pushover alert]
+  F --> E
+  E -->|Explicit approval + validation| G[Controlled actions]
+  G --> H[(Master Tracker / Email Links)]
+  H --> I[Dashboard]
+  J[Job leads] --> K[Separate opportunity review]
+  K --> E
+~~~
 
-**Design principle:** A detected email is not an approved application update. Review and approval are distinct steps. See [architecture details](docs/ARCHITECTURE.md).
+**No direct scanner-to-Master-Tracker write path.** A recruiting email can become a review candidate without becoming an authoritative application decision. See [Architecture](docs/ARCHITECTURE.md).
 
-## Explore without credentials
+## Measured private-system improvement
 
-The repository includes an **isolated synthetic-data preview**:
+On **29 October 2026**, a completed **45-day FULL** scan inspected **578 unique Gmail threads** in **115.1 seconds**. An immediate **14-day FAST** scan inspected **208 unique threads** in **36.9 seconds**: **approximately 68% lower measured runtime** (3.1× faster). Both scans left the Master Tracker unchanged.
 
-1. Download or clone the repository.
-2. Open [`demo/index.html`](demo/index.html) in a browser.
-3. Try the tabs, search, status filters, and record details.
+The private implementation is designed to repeat the full paged backfill after approximately **23 hours**. Its first successful checkpoint and the subsequent fast run were verified; the **next scheduled full recurrence was still awaiting observation**. A previous paged full scan surfaced three historical emails that had been missed by an older 300-thread cap, and triggered an **actual Pushover push**. Any resulting application changes required explicit approval.
 
-The preview runs entirely in the browser, contains **fictional employers and application records**, and makes **no requests** to Gmail, Sheets, Apps Script, or Pushover. Its styling and workflow are illustrative, not a pixel-perfect copy of the live Approval Center. See [demo walkthrough](docs/DEMO.md).
+These are specific operational measurements across different search windows, **not** a guaranteed benchmark. Later private full/fast optimizer and Job Hunter queue modules are **not included** in this older sanitized public source snapshot. Read the [case study](docs/CASE_STUDY.md) for tradeoffs and limitations.
 
-## Repository structure
+## Technology
 
-```text
-.github/workflows/ci.yml   # Offline checks on pushes and pull requests
-demo/index.html            # Standalone, synthetic, read-only UI preview
-docs/ARCHITECTURE.md       # Components, trust boundaries, approval flow
-docs/DEMO.md               # Demo script and limitations
-docs/ROADMAP.md            # Engineering follow-ups
-docs/SECURITY.md           # Data-handling guidelines
-src/*.gs                   # Genericized Apps Script reference modules
-src/ApprovalPage.html      # Approval Center front end
-src/appsscript.json        # Apps Script manifest
-tests/*.test.cjs           # Offline regression checks
-```
+JavaScript · Google Apps Script · GmailApp · Google Sheets · HTML/CSS · Pushover HTTP API · Git/GitHub · Node.js test runner · GitHub Actions.
 
-## Run tests locally
+### Project layout
 
-Requires **Node.js 20+**. No third-party dependencies or credentials are needed.
+~~~text
+src/                         Sanitized Apps Script reference modules (not live config)
+demo/index.html              Synthetic interactive, read-only browser demo
+tests/*.test.cjs             Mocked logic, notification and syntax checks
+.github/workflows/ci.yml     GitHub Actions CI
+tools/privacy_audit.py       Heuristic privacy scanner
+docs/ARCHITECTURE.md         Data flow and approval boundaries
+docs/CASE_STUDY.md           Implementation choices and actual observations
+docs/DEMO.md                 Recruiter walkthrough
+docs/ROADMAP.md              Verified vs incomplete work
+docs/SECURITY.md             Privacy model
+CHANGELOG.md                 Public release notes
+~~~
 
-```bash
+### Local checks
+
+Requires Node.js **20+** and Python 3:
+
+~~~bash
 npm test
-```
+python3 tools/privacy_audit.py
+~~~
 
-CI uses the same command. Tests cover parsing, key classifier/matching behavior, vacancy evidence checks, and notification failure/deduplication paths using mocks. They are **not** live Gmail/Sheets integration tests and do not prove the deployed automation is healthy at every moment.
+Tests are mocked/offline. They do not verify a live Google OAuth session, Apps Script deployment, Gmail inbox or Pushover delivery. The privacy scanner is heuristic, not a security certification.
 
-## Configuration and security
+## Status and roadmap
 
-A deployed instance would take account-specific settings from **Apps Script Script Properties** (not Git). See [`.env.example`](.env.example) for a nonsecret illustration and [security guidance](docs/SECURITY.md). Do **not** paste production credentials, live Sheet exports, real recruiting email content, or a personal Approval Center URL into Git or the demo.
+**Working privately:** Gmail monitoring and Review Inbox, owner-controlled application and opportunity tracking, real push notification, verified FULL/FAST scan pair, read-only deduplication checks and private approval UI (Web App version 30).
 
-The historical, one-off application repair scripts are excluded. The source contains illustrative employer aliases and placeholders; these do not configure an actual user account. Review all content before changing repository visibility, and do not treat the source as deploy-ready.
+**Still to verify:** automated daily Job Hunter proposal staging, an actual new-proposal push, the next due 45-day backfill and complete source/deployment parity.
 
-## Current status
+**Planned—not shipped:** per-job AI-generated tailored CV and cover-letter **drafts** using verified facts and human review. No autonomous application submission.
 
-- Core Approval Center flows and dashboards were manually verified in the live system (October 2026).
-- A scheduled scan was observed finishing successfully; a manual Pushover test reached the phone.
-- GitHub Actions CI passed after the initial test-suite commit.
-- **Still to verify:** a genuine new recruiting email triggering one Pushover notification and linking to the correct deployed `/exec` Approval Center.
-- **Still to harden:** performance of historical scans, maintenance scripts, deployment reproducibility, and a complete security review before public release.
+## Security boundary
 
-[Engineering roadmap](docs/ROADMAP.md) · [Architecture](docs/ARCHITECTURE.md) · [Demo](docs/DEMO.md) · [Security](docs/SECURITY.md)
+This public repository and demo do **not** expose private recruiting emails, personal CVs, production sheet/deployment links or credentials. Keep the private operational repository private and **never deploy** this sanitized source over the live Apps Script project. See [Security](docs/SECURITY.md).
 
-*Independent portfolio project; not an official Google, GitHub, or Pushover product.*
+*An independent engineering project, not an official Google, GitHub or Pushover product.*
